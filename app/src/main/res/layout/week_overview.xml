@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:background="#000000"
+    android:layout_height="match_parent">
+
+    <Button
+        style="@style/button"
+        android:layout_height="wrap_content"
+        android:text="Day 1"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        style="@style/button"
+        android:layout_height="wrap_content"
+        android:text="Day 2"
+        android:layout_gravity="center_horizontal" />
+    <Button
+        style="@style/button"
+        android:layout_height="wrap_content"
+        android:text="Day 3"
+        android:layout_gravity="center_horizontal" />
+    <Button
+        style="@style/button"
+        android:layout_height="wrap_content"
+        android:text="Day 4"
+        android:layout_gravity="center_horizontal" />
+    <Button
+        style="@style/button"
+        android:layout_height="wrap_content"
+        android:text="Day 5"
+        android:layout_gravity="center_horizontal" />
+    <Button
+        style="@style/button"
+        android:layout_height="wrap_content"
+        android:text="Day 6"
+        android:layout_gravity="center_horizontal" />
+    <Button
+        style="@style/button"
+        android:layout_height="wrap_content"
+        android:text="Day 7"
+        android:layout_gravity="center_horizontal" />
+</LinearLayout>

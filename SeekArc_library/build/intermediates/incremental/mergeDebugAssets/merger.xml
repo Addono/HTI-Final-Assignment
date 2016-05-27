@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="C:\Users\s150376\Desktop\SeekArc-master\SeekArc_library\assets"/><source path="C:\Users\s150376\Desktop\SeekArc-master\SeekArc_library\build\generated\assets\shaders\debug"/></dataSet><dataSet config="debug"><source path="C:\Users\s150376\Desktop\SeekArc-master\SeekArc_library\src\debug\assets"/></dataSet></merger>

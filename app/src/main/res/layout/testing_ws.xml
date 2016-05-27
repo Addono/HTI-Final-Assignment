@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/getdata"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GET Data" />
+
+    <Button
+        android:id="@+id/putdata"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PUT Data" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="getParam"
+        android:id="@+id/data1" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="old value"
+        android:id="@+id/data2" />
+
+</LinearLayout>
