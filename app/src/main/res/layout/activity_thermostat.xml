@@ -10,32 +10,47 @@
     android:gravity="center_horizontal"
     android:background="#000000"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".ThermostatActivity">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Current Temperature"
-        android:textSize="30dp"
-        android:textColor="#ffffff"
-        android:id="@+id/textView2" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="21 &#x2103;"
-        android:textSize="30dp"
-        android:textColor="#ffffff"
-        android:id="@+id/temp" />
+    tools:context=".ThermostatActivity"
+    android:weightSum="1">
 
     <!-- Add the seek arc -->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="fill_parent"
+            android:text="21"
+            android:id="@+id/button8"
+            android:textColor="#ffffff" />
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="20"
+            android:id="@+id/textView"
+            android:gravity="center_vertical|center_horizontal"
+            android:textColor="#ffffff"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:layout_width="50dp"
+            android:layout_height="fill_parent"
+            android:text="17"
+            android:id="@+id/button9"
+            android:layout_alignParentEnd="true"
+            android:textColor="#ffffff" />
+
+    </RelativeLayout>
+
     <com.triggertrap.seekarc.SeekArc
         android:id="@+id/seekArc"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_height="380dp"
         android:padding="30dp"
         seekarc:rotation="180"
         seekarc:startAngle="20"
@@ -45,18 +60,28 @@
 
         />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Week Overview"
-        android:id="@+id/week_overview"
-        android:layout_gravity="center_horizontal" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Testing Web Service"
-        android:id="@+id/testing_ws"
-        android:layout_gravity="center_horizontal" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="Week overview"
+            android:id="@+id/button10"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_toStartOf="@+id/switch1"
+            android:layout_marginLeft="10dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="Vacation Mode"
+            android:id="@+id/button11"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="10dp" />
+
+    </RelativeLayout>
 
 </LinearLayout>
