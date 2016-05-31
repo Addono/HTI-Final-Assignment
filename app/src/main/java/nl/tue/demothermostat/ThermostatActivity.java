@@ -1,12 +1,7 @@
 package nl.tue.demothermostat;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.triggertrap.seekarc.SeekArc;
@@ -16,7 +11,10 @@ public class ThermostatActivity extends Activity {
     private SeekArc seekArc;
     private TextView tempText;
 
-    private int perc;
+    private int angle, angle_prev;
+    private int angle_min = 0;
+    private int angle_max = 250;
+    private int angle_extreme_threshhold = 14;
     private double min_temp = 5;
     private double max_temp = 30;
 
@@ -32,6 +30,22 @@ public class ThermostatActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekArc seekArc) {
+                // Tries to anticipate if the user wanted to select a
+                // maximum or minimum. If so, set the angle to the
+                // the corresponding value.
+                if(Math.abs(angle - angle_max) <= angle_extreme_threshhold
+                        && angle - angle_prev > 0) {
+                    seekArc.setProgress(angle_max);
+                    angle = angle_max;
+                    tempText.setText(getTemp());
+                }
+
+                if(angle <= angle_extreme_threshhold
+                        && angle - angle_prev < 0) {
+                    seekArc.setProgress(angle_min);
+                    angle = angle_min;
+                    tempText.setText(getTemp());
+                }
             }
 
             @Override
@@ -41,7 +55,8 @@ public class ThermostatActivity extends Activity {
             @Override
             public void onProgressChanged(SeekArc seekArc, int progress,
                                           boolean fromUser) {
-                perc = seekArc.getProgress();
+                angle_prev = angle;
+                angle = seekArc.getProgress();
                 tempText.setText(getTemp());
             }
         });
@@ -55,12 +70,11 @@ public class ThermostatActivity extends Activity {
     private double percToTemp(int perc) {
         double delta_temp = max_temp - min_temp;
 
-        //return Math.round(10.0 * (min_temp + perc * delta_temp / 10000.0)) / 10.0;
-        return perc;
+        return Math.round(10.0 * (min_temp + angle * delta_temp / angle_max)) / 10.0;
     }
 
     private String getTemp() {
-        return percToTemp(perc) + "\u2103";
+        return percToTemp(angle) + "\u2103";
     }
 
         /**
