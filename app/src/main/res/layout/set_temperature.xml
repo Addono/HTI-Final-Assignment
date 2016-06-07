@@ -1,0 +1,351 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:seekarc="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="?android:colorBackground"
+    android:elevation="0dp"
+    tools:context=".ThermostatActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:id="@+id/header"
+        style="@style/header">
+
+        <LinearLayout
+            android:id="@+id/dayTempBtn"
+            android:clickable="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/dayTempText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Day"
+                style="@style/headerTitleSmall"
+                />
+            <TextView
+                android:id="@+id/serverDayTemp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="n/a"
+                style="@style/headerContent"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/currentTempBtn"
+            android:clickable="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/currentTempText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Current"
+                style="@style/headerTitleSmallSelected"
+                />
+            <TextView
+                android:id="@+id/serverCurrentTemp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="n/a"
+                style="@style/headerContentSelected"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/nightTempBtn"
+            android:clickable="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/nightTempText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Night"
+                style="@style/headerTitleSmall"
+                />
+            <TextView
+                android:id="@+id/serverNightTemp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="n/a"
+                style="@style/headerContent"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ViewFlipper
+        android:id="@+id/seekArcs"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/header"
+        >
+        <!-- Contains the day temperature arc -->
+        <RelativeLayout
+            android:id="@+id/seekArcDayTempContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="top"
+            >
+
+            <!-- The title of the view -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:text="Set day temperature"
+                android:textSize="20dp"
+                android:textColor="?android:textColorPrimary"
+                android:id="@+id/seekArcDayTempTitle"
+                android:elevation="1dp" />
+
+            <!-- Add the seek arc -->
+            <RelativeLayout
+                android:id="@+id/seekArcDayTempContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+                <com.triggertrap.seekarc.SeekArc
+                    android:id="@+id/seekArcDayTemp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="20dp"
+                    android:layout_alignParentTop="true"
+
+                    seekarc:arcColor="@color/dark_red"
+                    seekarc:progressColor="?android:statusBarColor"
+                    seekarc:rotation="180"
+                    seekarc:startAngle="15"
+                    seekarc:sweepAngle="330"
+                    seekarc:touchInside="true"
+                    seekarc:max="250"
+                    seekarc:thumb="@drawable/custom_seek_arc_control_selector"
+                    />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_centerInParent="true"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/prevDayTemp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Previous: n/a℃"
+                        android:textSize="20sp"
+                        android:textColor="?android:textColorSecondary"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1"
+                        />
+
+                    <TextView
+                        android:id="@+id/dayTemp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="n/a℃"
+                        android:textSize="40sp"
+                        android:textColor="?android:textColorPrimary"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="5"
+                        />
+                </LinearLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+
+
+        <!-- Contains the temporary temperature arc -->
+        <RelativeLayout
+            android:id="@+id/seekArcTempTempContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="top"
+            >
+
+            <!-- The title of the view -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:text="Set temporary temperature"
+                android:textSize="20dp"
+                android:textColor="?android:textColorPrimary"
+                android:id="@+id/seekArcTempTempTitle"
+                android:elevation="1dp" />
+
+            <!-- Add the seek arc -->
+            <RelativeLayout
+                android:id="@+id/seekArcTempTempContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+                <com.triggertrap.seekarc.SeekArc
+                    android:id="@+id/seekArcTempTemp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="20dp"
+                    android:layout_alignParentTop="true"
+
+                    seekarc:arcColor="@color/dark_red"
+                    seekarc:progressColor="?android:statusBarColor"
+                    seekarc:rotation="180"
+                    seekarc:startAngle="15"
+                    seekarc:sweepAngle="330"
+                    seekarc:touchInside="true"
+                    seekarc:max="250"
+                    seekarc:thumb="@drawable/custom_seek_arc_control_selector"
+                    />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_centerInParent="true"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/prevTempTemp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Previous: n/a℃"
+                        android:textSize="20sp"
+                        android:textColor="?android:textColorSecondary"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1"
+                        />
+
+                    <TextView
+                        android:id="@+id/tempTemp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="n/a℃"
+                        android:textSize="40sp"
+                        android:textColor="?android:textColorPrimary"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="5"
+                        />
+                </LinearLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <!-- Contains the night temperature arc -->
+        <RelativeLayout
+            android:id="@+id/seekArcNightTempContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="top"
+            >
+
+            <!-- The title of the view -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:text="Set night temperature"
+                android:textSize="20dp"
+                android:textColor="?android:textColorPrimary"
+                android:id="@+id/seekArcNightTempTitle"
+                android:elevation="1dp" />
+
+            <!-- Add the seek arc -->
+            <RelativeLayout
+                android:id="@+id/seekArcNightTempContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+                <com.triggertrap.seekarc.SeekArc
+                    android:id="@+id/seekArcNightTemp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="20dp"
+                    android:layout_alignParentTop="true"
+
+                    seekarc:arcColor="@color/dark_red"
+                    seekarc:progressColor="?android:statusBarColor"
+                    seekarc:rotation="180"
+                    seekarc:startAngle="15"
+                    seekarc:sweepAngle="330"
+                    seekarc:touchInside="true"
+                    seekarc:max="250"
+                    seekarc:thumb="@drawable/custom_seek_arc_control_selector"
+                    />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_centerInParent="true"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/prevNightTemp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Previous: n/a℃"
+                        android:textSize="20sp"
+                        android:textColor="?android:textColorSecondary"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1"
+                        />
+
+                    <TextView
+                        android:id="@+id/nightTemp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="n/a℃"
+                        android:textSize="40sp"
+                        android:textColor="?android:textColorPrimary"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="5"
+                        />
+                </LinearLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+    </ViewFlipper>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="?android:colorPrimaryDark"
+        >
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Week Overview"
+            android:id="@+id/week_overview"
+            style="@style/button" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Testing Web Service"
+            android:id="@+id/testing_ws"
+            style="@style/button" />
+    </LinearLayout>
+</RelativeLayout>

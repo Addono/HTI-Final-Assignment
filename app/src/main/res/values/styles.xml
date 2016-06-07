@@ -1,14 +1,45 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <!-- Whohoe, we use material design now! -->
+    <style name="AppTheme" parent="android:Theme.Material.Light">
+        <!-- theme customizations -->
     </style>
 
     <style name="button">
-        <item name="android:background">#000fff</item>
-        <item name="android:textColor">#ffffff</item>
-        <item name="android:layout_width">70dp</item>
+        <item name="android:background">?android:colorAccent</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:elevation">1dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+    </style>
+
+    <style name="headerTitleSmall">
+        <item name="android:textSize">13dp</item>
+    </style>
+
+    <style name="headerContent">
+        <item name="android:textSize">22dp</item>
+    </style>
+
+    <style name="headerTitleSmallSelected" parent="headerSelected">
+        <item name="android:textSize">13dp</item>
+    </style>
+
+    <style name="headerContentSelected" parent="headerSelected">
+        <item name="android:textSize">22dp</item>
+    </style>
+
+    <style name="headerSelected">
+        <item name="android:textColor">?android:colorAccent</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:elevation">3dp</item>
+    </style>
+
+    <style name="header">
+        <item name="android:background">?android:colorBackground</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:elevation">2dp</item>
     </style>
 
 </resources>

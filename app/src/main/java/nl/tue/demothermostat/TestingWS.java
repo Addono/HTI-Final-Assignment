@@ -24,9 +24,10 @@ public class TestingWS extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.testing_ws);
 
-        /* Use BASE_ADDRESS dedicated for your group,
+        /**
+         * Use BASE_ADDRESS dedicated for your group,
 		 * change 100 to you group number
-		 */
+		 **/
 
         int groupNumber = 29;
 
