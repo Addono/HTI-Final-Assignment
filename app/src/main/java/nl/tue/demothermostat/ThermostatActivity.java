@@ -8,6 +8,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.triggertrap.seekarc.SeekArc;
 import android.widget.ViewFlipper;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.R.*;
 
 
 import org.thermostatapp.util.*;
@@ -16,13 +19,15 @@ import java.util.TimerTask;
 
 public class ThermostatActivity extends Activity {
 
-    private SeekArc seekArcTempTemp, seekArcDayTemp, seekArcNightTemp;
+    private SeekArc seekArcTempTemp, seekArcDayTemp, seekArcNightTemp; // A seekArc for each temperature which can be set.
     private SeekArc[] seekArc;
     private TextView dayTempText, tempTempText, nightTempText,
-        serverDayTempText, serverNightTempText, serverCurrTempText;
-    private TextView[] tempText;
+            serverDayTempText, serverCurrTempText, serverNightTempText,
+            serverDayTempTitleText, serverCurrTempTitleText, serverNightTempTitleText;
+    private TextView[] tempText, serverTempText, serverTempTitleText;
     private LinearLayout dayTempBtn, tempTempBtn, nightTempBtn;
     private ViewFlipper arcView;
+    private Animation slide_in_left, slide_in_right, slide_out_left, slide_out_right;
 
     private int[] angle = new int[3], angle_prev = new int[3];
     private int angle_min = 0;
@@ -41,6 +46,36 @@ public class ThermostatActivity extends Activity {
     private int day_arc_tab = 0;
     private int temp_arc_tab = 1;
     private int night_arc_tab = 2;
+
+    private int prevTarget = -1;
+
+    private static boolean activityVisible;
+
+    public static boolean isActivityVisible() {
+        return activityVisible;
+    }
+
+    public static void activityResumed() {
+        activityVisible = true;
+    }
+
+    public static void activityPaused() {
+        activityVisible = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        activityResumed();
+        System.out.println("Resumed");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        activityPaused();
+        System.out.println("Paused");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +102,25 @@ public class ThermostatActivity extends Activity {
         tempText[1] = tempTempText;
         tempText[2] = nightTempText;
 
+        // Define all server temperatures text elements of the header.
         serverDayTempText = (TextView) findViewById(R.id.serverDayTemp);
         serverCurrTempText = (TextView) findViewById(R.id.serverCurrentTemp);
         serverNightTempText = (TextView) findViewById(R.id.serverNightTemp);
+
+        serverTempText = new TextView[3];
+        serverTempText[0] = serverDayTempText;
+        serverTempText[1] = serverCurrTempText;
+        serverTempText[2] = serverNightTempText;
+
+        // Defome all server temperature title text elements of the header.
+        serverDayTempTitleText = (TextView) findViewById(R.id.dayTempText);
+        serverCurrTempTitleText = (TextView) findViewById(R.id.currentTempText);
+        serverNightTempTitleText = (TextView) findViewById(R.id.nightTempText);
+
+        serverTempTitleText = new TextView[3];
+        serverTempTitleText[0] = serverDayTempTitleText;
+        serverTempTitleText[1] = serverCurrTempTitleText;
+        serverTempTitleText[2] = serverNightTempTitleText;
 
         dayTempBtn = (LinearLayout) findViewById(R.id.dayTempBtn);
         tempTempBtn = (LinearLayout) findViewById(R.id.currentTempBtn);
@@ -82,6 +133,15 @@ public class ThermostatActivity extends Activity {
 
         HeatingSystem.BASE_ADDRESS = main_server + groupNumber;
         HeatingSystem.WEEK_PROGRAM_ADDRESS = HeatingSystem.BASE_ADDRESS + "/weekProgram";
+
+        // Create animations
+        slide_in_left = AnimationUtils.loadAnimation(this, R.anim.slide_in_left);
+        slide_in_right = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
+        slide_out_left = AnimationUtils.loadAnimation(this, R.anim.slide_out_left);
+        slide_out_right = AnimationUtils.loadAnimation(this, R.anim.slide_out_right);
+
+        // Set the default arc
+        setDisplayedArc(temp_arc_tab);
 
         // Get the current temperature.
         new Thread(new Runnable() {
@@ -105,23 +165,27 @@ public class ThermostatActivity extends Activity {
 
         Timer updateCurrentTemp = new Timer();
         updateCurrentTemp.scheduleAtFixedRate(new TimerTask() {
+
             @Override
             public void run() {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        try {
-                            String[] tempOptions = {
-                                    "dayTemperature",
-                                    "currentTemperature",
-                                    "nightTemperature"
-                            };
+                        // Check if the app runs in the foreground, if so request updated values of the day, current, and night temperature.
+                        if(ThermostatActivity.isActivityVisible()) {
+                            try {
+                                String[] tempOptions = {
+                                        "dayTemperature",
+                                        "currentTemperature",
+                                        "nightTemperature"
+                                };
 
-                            for(int i = 0; i < tempOptions.length; i++) {
-                                setTemp(i, HeatingSystem.get(tempOptions[i]));
+                                for (int i = 0; i < tempOptions.length; i++) {
+                                    setTemp(i, HeatingSystem.get(tempOptions[i]));
+                                }
+                            } catch (Exception e) {
+                                System.err.println("Error from getdata " + e);
                             }
-                        } catch (Exception e) {
-                            System.err.println("Error from getdata " + e);
                         }
                     }
                 }).start();
@@ -138,7 +202,7 @@ public class ThermostatActivity extends Activity {
             }
         }, 0, poll_time);
 
-
+        // Initialise listener for all seek arcs.
         for(int b = 0; b < seekArc.length; b++) {
             final int i = b;
             seekArc[i].setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
@@ -160,7 +224,12 @@ public class ThermostatActivity extends Activity {
                         setTemp(i, min_temp);
                     }
 
+                    // Post the new temperature to the server.
                     postTemp(i, angleToTemp(angle[i]));
+
+                    /**
+                     * TODO Add revert option when temperature is changed (use a "snackbar").
+                     */
                 }
 
                 @Override
@@ -181,35 +250,70 @@ public class ThermostatActivity extends Activity {
             });
         }
 
+        // Add an on touch listener to the day temperature button.
         dayTempBtn.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motion) {
                 if(motion.getAction() == MotionEvent.ACTION_UP) {
-                    arcView.setDisplayedChild(day_arc_tab);
+                    setDisplayedArc(day_arc_tab);
                 }
                 return false;
             }
         });
 
+        // Add an on touch listener to the temperoray temperature button.
         tempTempBtn.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motion) {
                 if(motion.getAction() == MotionEvent.ACTION_UP) {
-                    arcView.setDisplayedChild(temp_arc_tab);
+                    setDisplayedArc(temp_arc_tab);
                 }
                 return false;
             }
         });
 
+        // Add an on touch listener to the night temperature button.
         nightTempBtn.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motion) {
                 if(motion.getAction() == MotionEvent.ACTION_UP) {
-                    arcView.setDisplayedChild(night_arc_tab);
+                    setDisplayedArc(night_arc_tab);
                 }
                 return false;
             }
         });
+    }
+
+    private void setDisplayedArc(int target) {
+        // Prevent transition to the current arc.
+        if (prevTarget != target) {
+            // Set the animations.
+            if (prevTarget != -1) { // Do not animate if this is the initial setup.
+                // Check if we have to transition to the left or right, adjust animations accordingly.
+                if (prevTarget < target) {
+                    arcView.setInAnimation(slide_in_right);
+                    arcView.setOutAnimation(slide_out_left);
+                } else {
+                    arcView.setInAnimation(slide_in_left);
+                    arcView.setOutAnimation(slide_out_right);
+                }
+
+                arcView.setDisplayedChild(target);
+            }
+
+            // Set the style of each arc such that only the target arc has the selected style.
+            for (int i = 0; i < seekArc.length; i++) {
+                if (target == i) {
+                    serverTempText[i].setTextAppearance(this, R.style.headerContentSelected);
+                    serverTempTitleText[i].setTextAppearance(this, R.style.headerTitleSmallSelected);
+                } else {
+                    serverTempText[i].setTextAppearance(this, R.style.headerContent);
+                    serverTempTitleText[i].setTextAppearance(this, R.style.headerTitleSmall);
+                }
+            }
+
+            prevTarget = target; // Update the previous target variable for the next transition.
+        }
     }
 
     /**
@@ -233,7 +337,7 @@ public class ThermostatActivity extends Activity {
 
     private void setTemp(int target, double temp) {
         int angle = tempToAngle(temp);
-        System.out.println("Set " + target + " to " + temp + "C");
+
         seekArc[target].setProgress(angle);
         setAngle(target, angle);
         tempText[target].setText(getTemp(target));
@@ -280,9 +384,8 @@ public class ThermostatActivity extends Activity {
         }).start();
     }
 
-    private void postTemp(int i, double temp) {
-        postTemp(i, String.valueOf(temp));
-    }
+    private void postTemp(int i, double temp) { postTemp(i, String.valueOf(temp)); }
+
         /**
         ImageView bPlus = (ImageView)findViewById(R.id.bPlus);
         bPlus.setImageResource(R.drawable.add_button);
