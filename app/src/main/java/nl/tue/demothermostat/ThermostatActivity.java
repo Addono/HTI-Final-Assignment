@@ -163,44 +163,44 @@ public class ThermostatActivity extends Activity {
             }
         }).start();
 
-        Timer updateCurrentTemp = new Timer();
-        updateCurrentTemp.scheduleAtFixedRate(new TimerTask() {
-
-            @Override
-            public void run() {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Check if the app runs in the foreground, if so request updated values of the day, current, and night temperature.
-                        if(ThermostatActivity.isActivityVisible()) {
-                            try {
-                                String[] tempOptions = {
-                                        "dayTemperature",
-                                        "currentTemperature",
-                                        "nightTemperature"
-                                };
-
-                                for (int i = 0; i < tempOptions.length; i++) {
-                                    setTemp(i, HeatingSystem.get(tempOptions[i]));
-                                }
-                            } catch (Exception e) {
-                                System.err.println("Error from getdata " + e);
-                            }
-                        }
-                    }
-                }).start();
-
-                // Redraw the current temperature, if it is set (thus it has to be not null).
-                if(getCurrTemp() != null) {
-                    runOnUiThread(new Runnable() {
+        // Create a new thread which keeps polling the server for new data.
+        new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Timer updateCurrentTemp = new Timer();
+                    updateCurrentTemp.scheduleAtFixedRate(new TimerTask() {
                         @Override
                         public void run() {
-                            updateAllTempText();
-                        }
-                    });
-                }
+                            // Check if the app runs in the foreground, if so request updated values of the day, current, and night temperature.
+                            if(ThermostatActivity.isActivityVisible()) {
+                                try {
+                                    String[] tempOptions = {
+                                            "dayTemperature",
+                                            "currentTemperature",
+                                            "nightTemperature"
+                                    };
+
+                                    for (int i = 0; i < tempOptions.length; i++) {
+                                        setTemp(i, HeatingSystem.get(tempOptions[i]));
+                                    }
+                                } catch (Exception e) {
+                                    System.err.println("Error from getdata " + e);
+                                }
+                            }
+
+                            // Redraw the current temperature, if it is set (thus it has to be not null).
+                            if(getCurrTemp() != null) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        updateAllTempText();
+                                    }
+                                });
+                            }
+                    }
+                }, 0, poll_time);
             }
-        }, 0, poll_time);
+        }).start();
 
         // Initialise listener for all seek arcs.
         for(int b = 0; b < seekArc.length; b++) {
@@ -371,7 +371,7 @@ public class ThermostatActivity extends Activity {
 
         final String serverVarName = allServerVars[target];
 
-        // Get the current temperature.
+        // Post the new temperature to the server.
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -382,6 +382,11 @@ public class ThermostatActivity extends Activity {
                 }
             }
         }).start();
+
+        //
+        if(allServerVars[target] != "targetTemperature") {
+            setTemp(target, temp);
+        }
     }
 
     private void postTemp(int i, double temp) { postTemp(i, String.valueOf(temp)); }
