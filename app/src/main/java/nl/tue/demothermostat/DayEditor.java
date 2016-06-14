@@ -10,9 +10,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.content.Intent;
+
 import org.thermostatapp.util.*;
 
-public class TestingWS extends Activity {
+public class DayEditor extends Activity {
+    Intent intent;
+    String day;
 
     Button getdata, putdata;
     TextView data1, data2;
@@ -22,25 +26,17 @@ public class TestingWS extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.testing_ws);
+        setContentView(R.layout.day_editor);
 
-        /**
-         * Use BASE_ADDRESS dedicated for your group,
-		 * change 100 to you group number
-		 **/
+        intent = getIntent();
+        day = intent.getStringExtra("day");
 
-        int groupNumber = 29;
+        getdata = (Button) findViewById(R.id.getdata);
+        putdata = (Button) findViewById(R.id.putdata);
+        data1 = (TextView) findViewById(R.id.data1);
+        data2 = (TextView) findViewById(R.id.data2);
 
-        String main_server = "http://wwwis.win.tue.nl/2id40-ws/";
-        String backup_server = "http://pcwin889.win.tue.nl/2id40-ws/";
-
-        HeatingSystem.BASE_ADDRESS = backup_server + groupNumber;
-        HeatingSystem.WEEK_PROGRAM_ADDRESS = HeatingSystem.BASE_ADDRESS + "/weekProgram";
-
-        getdata = (Button)findViewById(R.id.getdata);
-        putdata = (Button)findViewById(R.id.putdata);
-        data1 = (TextView)findViewById(R.id.data1);
-        data2 = (TextView)findViewById(R.id.data2);
+        data1.setText(day);
 
         /*
          When the user clicks on GET Data button the value of the corresponding parameter is read from the server
@@ -58,7 +54,7 @@ public class TestingWS extends Activity {
                         try {
                             getParam = HeatingSystem.get("currentTemperature");
                             /*
-									HeatingSystem.get("day");
+                                    HeatingSystem.get("day");
 									HeatingSystem.get("time");
 									HeatingSystem.get("targetTemperature");
 									HeatingSystem.get("dayTemperature");
@@ -72,7 +68,7 @@ public class TestingWS extends Activity {
                                 }
                             });
                         } catch (Exception e) {
-                            System.err.println("Error from getdata "+e);
+                            System.err.println("Error from getdata " + e);
                         }
                     }
                 }).start();
@@ -97,9 +93,9 @@ public class TestingWS extends Activity {
 
                             /* Uncomment the following parts to see how to work with the properties of the week program */
                             // Get the week program
-                            //WeekProgram wpg = HeatingSystem.getWeekProgram();
+                            WeekProgram wpg = HeatingSystem.getWeekProgram();
                             // Set the week program to default
-                            //wpg.setDefault();
+                            wpg.setDefault();
                             /*
                             wpg.data.get("Monday").set(5, new Switch("day", true, "07:30"));
                             wpg.data.get("Monday").set(1, new Switch("night", true, "08:30"));

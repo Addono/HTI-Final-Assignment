@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.MotionEvent;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import com.triggertrap.seekarc.SeekArc;
-import android.widget.ViewFlipper;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Button;
+import android.widget.ViewFlipper;
+import android.content.Intent;
+import com.triggertrap.seekarc.SeekArc;
 import android.R.*;
 
 
@@ -23,11 +25,14 @@ public class ThermostatActivity extends Activity {
     private SeekArc[] seekArc;
     private TextView dayTempText, tempTempText, nightTempText,
             serverDayTempText, serverCurrTempText, serverNightTempText,
-            serverDayTempTitleText, serverCurrTempTitleText, serverNightTempTitleText;
-    private TextView[] tempText, serverTempText, serverTempTitleText;
+            serverDayTempTitleText, serverCurrTempTitleText, serverNightTempTitleText,
+            prevDayTempText, prevTempTempText, prevNightTempText;
+    private TextView[] tempText, serverTempText, serverTempTitleText, prevTempText;
     private LinearLayout dayTempBtn, tempTempBtn, nightTempBtn;
     private ViewFlipper arcView;
     private Animation slide_in_left, slide_in_right, slide_out_left, slide_out_right;
+    private Button weekOverviewBtn;
+    private Intent intent;
 
     private int[] angle = new int[3], angle_prev = new int[3];
     private int angle_min = 0;
@@ -41,6 +46,7 @@ public class ThermostatActivity extends Activity {
     private int groupNumber = 29;
 
     private String[] temp = new String[3];
+    private String[] prevTemp = new String[3];
 
 
     private int day_arc_tab = 0;
@@ -112,21 +118,35 @@ public class ThermostatActivity extends Activity {
         serverTempText[1] = serverCurrTempText;
         serverTempText[2] = serverNightTempText;
 
-        // Defome all server temperature title text elements of the header.
+        // Define all server temperature title text elements of the header.
         serverDayTempTitleText = (TextView) findViewById(R.id.dayTempText);
         serverCurrTempTitleText = (TextView) findViewById(R.id.currentTempText);
         serverNightTempTitleText = (TextView) findViewById(R.id.nightTempText);
 
-        serverTempTitleText = new TextView[3];
-        serverTempTitleText[0] = serverDayTempTitleText;
-        serverTempTitleText[1] = serverCurrTempTitleText;
-        serverTempTitleText[2] = serverNightTempTitleText;
+        serverTempTitleText = new TextView[]{
+                serverDayTempTitleText,
+                serverCurrTempTitleText,
+                serverNightTempTitleText
+        };
+
+        // Define all temporary temperature text views.
+        prevDayTempText = (TextView) findViewById(R.id.prevDayTemp);
+        prevTempTempText = (TextView) findViewById(R.id.prevTempTemp);
+        prevNightTempText = (TextView) findViewById(R.id.prevNightTemp);
+
+        prevTempText = new TextView[] {
+                prevDayTempText,
+                prevTempTempText,
+                prevNightTempText
+        };
 
         dayTempBtn = (LinearLayout) findViewById(R.id.dayTempBtn);
         tempTempBtn = (LinearLayout) findViewById(R.id.currentTempBtn);
         nightTempBtn = (LinearLayout) findViewById(R.id.nightTempBtn);
 
         arcView = (ViewFlipper) findViewById(R.id.seekArcs);
+
+        weekOverviewBtn = (Button)findViewById(R.id.week_overview);
 
         String main_server = "http://wwwis.win.tue.nl/2id40-ws/";
         String backup_server = "http://pcwin889.win.tue.nl/2id40-ws/";
@@ -231,6 +251,7 @@ public class ThermostatActivity extends Activity {
 
                 @Override
                 public void onStartTrackingTouch(SeekArc seekArc) {
+                    setPrevTemp(i);
                 }
 
                 @Override
@@ -280,8 +301,17 @@ public class ThermostatActivity extends Activity {
             }
         });
 
-        // Set the default arc
+        // Set the default arc to the temporary temperature arc.
         setDisplayedArc(temp_arc_tab);
+
+        // Add a listener to the
+        weekOverviewBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), WeekOverview.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void setDisplayedArc(int target) {
@@ -391,6 +421,11 @@ public class ThermostatActivity extends Activity {
 
     private void postTemp(int i, double temp) { postTemp(i, String.valueOf(temp)); }
 
+    private void setPrevTemp(int target) {
+        this.prevTemp[target] = this.temp[target];
+        this.prevTempText[target].setText("Previous: " + this.prevTemp[target] + "℃");
+    }
+
         /**
         ImageView bPlus = (ImageView)findViewById(R.id.bPlus);
         bPlus.setImageResource(R.drawable.add_button);
@@ -413,7 +448,7 @@ public class ThermostatActivity extends Activity {
         testingWS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), TestingWS.class);
+                Intent intent = new Intent(view.getContext(), DayEditor.class);
                 startActivity(intent);
             }
         });

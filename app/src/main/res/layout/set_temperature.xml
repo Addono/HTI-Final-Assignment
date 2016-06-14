@@ -24,17 +24,17 @@
             android:layout_weight="1">
             <TextView
                 android:id="@+id/dayTempText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:text="Day"
                 style="@style/headerTitleSmall"
                 />
             <TextView
                 android:id="@+id/serverDayTemp"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:gravity="center"
                 android:text="n/a"
                 style="@style/headerContent"
                 />
@@ -49,17 +49,17 @@
             android:layout_weight="1">
             <TextView
                 android:id="@+id/currentTempText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:text="Current"
                 style="@style/headerTitleSmallSelected"
                 />
             <TextView
                 android:id="@+id/serverCurrentTemp"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:gravity="center"
                 android:text="n/a"
                 style="@style/headerContentSelected"
                 />
@@ -74,17 +74,17 @@
             android:layout_weight="1">
             <TextView
                 android:id="@+id/nightTempText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:text="Night"
                 style="@style/headerTitleSmall"
                 />
             <TextView
                 android:id="@+id/serverNightTemp"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:gravity="center"
                 android:text="n/a"
                 style="@style/headerContent"
                 />
