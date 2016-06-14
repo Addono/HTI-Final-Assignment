@@ -44,7 +44,7 @@ public class WeekOverview extends ListActivity {
         days = new ArrayList<Day>() {{
                 add(new Day(R.string.monday, DayEditor.class));
                 add(new Day(R.string.tuesday, DayEditor.class));
-                add(new Day(R.string.wensday, DayEditor.class));
+                add(new Day(R.string.wednesday, DayEditor.class));
                 add(new Day(R.string.thurday, DayEditor.class));
                 add(new Day(R.string.friday, DayEditor.class));
                 add(new Day(R.string.saturday, DayEditor.class));
