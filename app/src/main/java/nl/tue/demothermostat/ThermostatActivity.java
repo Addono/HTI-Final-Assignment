@@ -288,7 +288,7 @@ public class ThermostatActivity extends Activity {
         // Prevent transition to the current arc.
         if (prevTarget != target) {
             // Set the animations.
-            if (prevTarget != -1 || true) { // Do not animate if this is the initial setup.
+            if (prevTarget != -1) { // Do not animate if this is the initial setup.
                 // Check if we have to transition to the left or right, adjust animations accordingly.
                 if (prevTarget < target) {
                     arcView.setInAnimation(slide_in_right);
