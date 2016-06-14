@@ -140,9 +140,6 @@ public class ThermostatActivity extends Activity {
         slide_out_left = AnimationUtils.loadAnimation(this, R.anim.slide_out_left);
         slide_out_right = AnimationUtils.loadAnimation(this, R.anim.slide_out_right);
 
-        // Set the default arc
-        setDisplayedArc(temp_arc_tab);
-
         // Get the current temperature.
         new Thread(new Runnable() {
             @Override
@@ -282,13 +279,16 @@ public class ThermostatActivity extends Activity {
                 return false;
             }
         });
+
+        // Set the default arc
+        setDisplayedArc(temp_arc_tab);
     }
 
     private void setDisplayedArc(int target) {
         // Prevent transition to the current arc.
         if (prevTarget != target) {
             // Set the animations.
-            if (prevTarget != -1) { // Do not animate if this is the initial setup.
+            if (prevTarget != -1 || true) { // Do not animate if this is the initial setup.
                 // Check if we have to transition to the left or right, adjust animations accordingly.
                 if (prevTarget < target) {
                     arcView.setInAnimation(slide_in_right);
@@ -297,9 +297,9 @@ public class ThermostatActivity extends Activity {
                     arcView.setInAnimation(slide_in_left);
                     arcView.setOutAnimation(slide_out_right);
                 }
-
-                arcView.setDisplayedChild(target);
             }
+
+            arcView.setDisplayedChild(target);
 
             // Set the style of each arc such that only the target arc has the selected style.
             for (int i = 0; i < seekArc.length; i++) {
