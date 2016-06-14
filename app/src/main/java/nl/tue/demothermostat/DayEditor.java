@@ -11,16 +11,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.content.Intent;
+import java.util.ArrayList;
 
 import org.thermostatapp.util.*;
 
 public class DayEditor extends Activity {
     Intent intent;
-    String day;
+    static String day;
 
     Button getdata, putdata;
     TextView data1, data2;
     String getParam, oldv, newv;
+    ArrayList<Switch> switches;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +98,12 @@ public class DayEditor extends Activity {
                             WeekProgram wpg = HeatingSystem.getWeekProgram();
                             // Set the week program to default
                             wpg.setDefault();
+
+                            switches = wpg.data.get(DayEditor.day);
+
+                            for(int i = 0; i < wpg.data.get("Monday").size(); i++) {
+
+                            }
                             /*
                             wpg.data.get("Monday").set(5, new Switch("day", true, "07:30"));
                             wpg.data.get("Monday").set(1, new Switch("night", true, "08:30"));
