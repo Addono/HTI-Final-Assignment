@@ -56,7 +56,7 @@ public class WeekOverview extends ListActivity {
                 android.R.id.text1,
                 days);
 
-        // Create the list adapter for our list of days.
+        // Create the listView adapter for our listView of days.
         setListAdapter(arrayAdapter);
     }
 
@@ -67,7 +67,7 @@ public class WeekOverview extends ListActivity {
         // Add the day on which is clicked to the intent before parsing.
         intent.putExtra("day", days.get(position).toString());
 
-        // Launch the activity of the day associated with this list position.
+        // Launch the activity of the day associated with this listView position.
         startActivity(intent);
     }
 }
