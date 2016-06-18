@@ -21,6 +21,10 @@ import java.util.Comparator;
 
 import org.thermostatapp.util.*;
 
+/**
+ * @author Adriaan Knapen <a.d.knapen@student.tue.nl>
+ */
+
 public class DayEditor extends Activity implements OnItemClickListener {
     Intent intent;
     static String day;
@@ -57,37 +61,35 @@ public class DayEditor extends Activity implements OnItemClickListener {
 
                     switches = wpg.data.get(DayEditor.day);
 
-
-                    int prevTime = -1;
-                    boolean prevDay = true;
-
                     for(int i = 0; i < switches.size(); i++) {
                         Switch s = switches.get(i);
                         boolean isDay = s.getType().equals("day");
                         int time = s.getTime_Int();
+                        SwitchListItem.Type type;
 
-                        if(time > prevTime && isDay != prevDay) {
-                            addItem(isDay, time);
+                        System.err.println(s.getTime() + " " + s.getType());
 
-                            prevTime = time;
-                            prevDay = isDay;
+                        // Give the first item the "first" type, all other the "center" type.
+                        if(i == 0) {
+                            type = SwitchListItem.Type.first;
+                        } else {
+                            type = SwitchListItem.Type.center;
                         }
+
+                        addItem(isDay, time, type);
                     }
 
                     // Add the midnight switch.
-                    addItem(false, 2400);
+                    addItem(false, 2400, SwitchListItem.Type.last);
+
+                    removeDuplicates();
                 } catch (Exception e) {
                     System.err.println("Error from getdata " + e);
                 }
             }
         }).start();
 
-        adapter = new DayListViewAdapter(this,
-                R.layout.switch_list_element,
-                items);
-
-        // Create the list adapter for our list of temperature switches.
-        listView.setAdapter(adapter);
+        resetAdapter();
 
         // Add an click listener to the list view.
         listView.setOnItemClickListener(this);
@@ -101,54 +103,75 @@ public class DayEditor extends Activity implements OnItemClickListener {
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {
-        // Make a distinction for clicks on the intersections and the titles.
-        if(position % 2 == 1) {
-            // If clicked on an intersection do ...
-            addItem(false, 2401);
-        } else {
-            // If clicked on a title show a time picker dialog
-            SwitchListItem item = adapter.getItem(position);
-            new TimePickerDialog(this,
-                    new TimePickerDialog.OnTimeSetListener() {
-                        @Override
-                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        SwitchListItem item = adapter.getItem(position);
 
-                        }
-                    }, item.getHour(), item.getMinute(), true).show();
-        }
+        // If clicked on a title show a time picker dialog
+        new TimePickerDialog(this,
+                new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+
+                    }
+                }, item.getHour(), item.getMinute(), true).show();
     }
 
-    public void addItem(boolean isDay, int time) {
-        SwitchListItem period = new SwitchListItem(isDay, false, time);
+    public void addItem(boolean isDay, int time, SwitchListItem.Type type) {
+        SwitchListItem period = new SwitchListItem(isDay, time, type);
         adapter.add(period);
-
-        // Do not add an intersection item after midnight.
-        if(time < 2400) {
-            SwitchListItem intersection = new SwitchListItem(isDay, true, time);
-            adapter.add(intersection);
-        }
     }
 
     /**
-     * TODO: Implement removeDuplicates function.
+     * Removes all duplicates and unnecessary switches from the "items" array list.
      */
     public void removeDuplicates() {
+        // Get the data of the first elements.
+        boolean prevDay = !items.get(0).isDay();
+        int prevTime = -1;
 
+        for(int i = 0, size = items.size(); i < size; i++) {
+            SwitchListItem item = items.get(i);
+
+            boolean isDay = item.isDay();
+            int time = item.getTime();
+            SwitchListItem.Type type = item.getType();
+
+            if(time > prevTime && isDay != prevDay || type != SwitchListItem.Type.center) {
+                prevTime = time;
+                prevDay = isDay;
+            } else {
+                // Remove it
+                items.remove(i);
+                i--;
+                size--;
+            }
+        }
     }
 
     /**
-     * TODO: Check if working
+     * TODO: Implement remove item function.
+     */
+    public void removeItem(int position) {
+        // Validate if we will not remove the first or last item.
+        if(position <= 0 || position >= items.size()) {
+            System.err.println("Attempted to remove first or last item from the day editor.");
+        } else {
+            items.remove(position);
+
+            removeDuplicates();
+
+            resetAdapter();
+        }
+    }
+
+    /**
+     * Sorts all currently displayed items.
      */
     public void sortItems() {
         adapter.sort(new Comparator<SwitchListItem>() {
             @Override
             public int compare(SwitchListItem lhs, SwitchListItem rhs) {
                 if(lhs.getTime() == rhs.getTime()) {
-                    if(rhs.getIsIntersection()) {
-                        return -1;
-                    } else {
-                        return 1;
-                    }
+                    return 0;
                 } else if(lhs.getTime() > rhs.getTime()) {
                     return 1;
                 } else {
@@ -157,5 +180,10 @@ public class DayEditor extends Activity implements OnItemClickListener {
 
             }
         });
+    }
+
+    public void resetAdapter() {
+        adapter = new DayListViewAdapter(this,R.layout.switch_list_element,items, this);
+        listView.setAdapter(adapter);
     }
 }

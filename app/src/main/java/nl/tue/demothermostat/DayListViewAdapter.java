@@ -3,7 +3,6 @@ package nl.tue.demothermostat;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -13,14 +12,19 @@ import android.widget.Button;
 import java.util.ArrayList;
 
 /**
- * Created by s150376 on 6/14/2016.
+ * @author Adriaan Knapen <a.d.knapen@student.tue.nl>
  */
 public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
     Context context;
+    DayEditor dayEditor;
+    ViewHolder holder = null;
+    SwitchListItem item, succeedingItem, precedingItem;
 
     public DayListViewAdapter(Context context, int resourceId,
-                              ArrayList<SwitchListItem> items) {
+                              ArrayList<SwitchListItem> items,
+                              DayEditor dayEditor) {
         super(context, resourceId, items);
+        this.dayEditor = dayEditor;
         this.context = context;
     }
 
@@ -31,10 +35,8 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
         Button button;
     }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = null;
-        SwitchListItem item = getItem(position);
-        SwitchListItem succeedingItem, precedingItem;
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        item = getItem(position);
 
         if(position > 0) {
             precedingItem = getItem(position - 1);
@@ -69,34 +71,32 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        if(position % 2 == 0) {
+
+        if(!item.isOuter() ) {
+            holder.button.setVisibility(View.VISIBLE);
             holder.button.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            System.out.println("Test");
+                            dayEditor.removeItem(position);
                         }
                     }
             );
         }
 
+        // Set the title to the first time.
+        String title = item.toString();
+        holder.title.setText(title);
 
-
-        if(!item.getIsIntersection()) {
-            // Set the title to the start time.
-            String title = item.toString();
-            holder.title.setText(title);
-
-            if (item.getIsDay()) {
-                holder.dot.setBackgroundResource(R.drawable.dot_day);
-            } else {
-                holder.dot.setBackgroundResource(R.drawable.dot_night);
-            }
+        if (item.isDay()) {
+            holder.dot.setBackgroundResource(R.drawable.dot_day);
+        } else {
+            holder.dot.setBackgroundResource(R.drawable.dot_night);
         }
 
         // Set the color of the upper part of the vertical line.
-        if(precedingItem != null) {
-            if(precedingItem.getIsDay()) {
+        if(item.getType() != SwitchListItem.Type.first) {
+            if(precedingItem.isDay()) {
                 holder.lineUp.setBackgroundResource(R.color.day);
             } else {
                 holder.lineUp.setBackgroundResource(R.color.night);
@@ -104,8 +104,8 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
         }
 
         // Set the color of the lower part of the vertical line.
-        if(succeedingItem != null) {
-            if(item.getIsDay()) {
+        if(item.getType() != SwitchListItem.Type.last) {
+            if(item.isDay()) {
                 holder.lineDown.setBackgroundResource(R.color.day);
             } else {
                 holder.lineDown.setBackgroundResource(R.color.night);

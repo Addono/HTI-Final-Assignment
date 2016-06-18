@@ -1,16 +1,19 @@
 package nl.tue.demothermostat;
 
 /**
- * Created by s150376 on 6/14/2016.
+ * @author Adriaan Knapen <a.d.knapen@student.tue.nl>
  */
 public class SwitchListItem {
-    private boolean isDay, intersection;
-    private int time;
+    public enum Type {center, first, last};
 
-    public SwitchListItem(boolean isDay, boolean intersection, int time) {
+    private boolean isDay;
+    private int time;
+    private Type type;
+
+    public SwitchListItem(boolean isDay, int time, Type type) {
         this.isDay = isDay;
-        this.intersection = intersection;
         this.time = time;
+        this.type = type;
     }
 
     public int getTime() {
@@ -21,11 +24,17 @@ public class SwitchListItem {
 
     public int getMinute() {return (int) Math.floor((getTime() % 100f) * 60f / 100f);}
 
-    public boolean getIsDay() {
+    public boolean isDay() {
         return isDay;
     }
 
-    public boolean getIsIntersection() { return intersection; }
+    public Type getType() {
+        return type;
+    }
+
+    public boolean isOuter() {
+        return type != Type.center;
+    }
 
     @Override
     public String toString() {

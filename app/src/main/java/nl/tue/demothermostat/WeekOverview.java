@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import java.util.ArrayList;
 
 /**
- * Created by nstash on 06/05/15.
+ * @author Adriaan Knapen <a.d.knapen@student.tue.nl>
  */
 public class WeekOverview extends ListActivity {
     /**

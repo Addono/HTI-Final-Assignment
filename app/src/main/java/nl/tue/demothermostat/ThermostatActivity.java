@@ -22,6 +22,9 @@ import java.util.TimerTask;
 /**
  * TODO: Implement holliday mode.
  */
+/**
+ * @author Adriaan Knapen <a.d.knapen@student.tue.nl>
+ */
 public class ThermostatActivity extends Activity {
 
     private SeekArc seekArcTempTemp, seekArcDayTemp, seekArcNightTemp; // A seekArc for each temperature which can be set.
