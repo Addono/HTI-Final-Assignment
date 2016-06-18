@@ -18,7 +18,7 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
     Context context;
     DayEditor dayEditor;
     ViewHolder holder = null;
-    SwitchListItem item, succeedingItem, precedingItem;
+    SwitchListItem item;
 
     public DayListViewAdapter(Context context, int resourceId,
                               ArrayList<SwitchListItem> items,
@@ -37,19 +37,6 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
 
     public View getView(final int position, View convertView, ViewGroup parent) {
         item = getItem(position);
-
-        if(position > 0) {
-            precedingItem = getItem(position - 1);
-        } else {
-            precedingItem = null;
-        }
-
-        if(getCount() > position + 1) {
-            succeedingItem = getItem(position + 1);
-        } else {
-            succeedingItem = null;
-        }
-
 
         LayoutInflater mInflater = (LayoutInflater) context
                 .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
@@ -71,8 +58,8 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-
-        if(!item.isOuter() ) {
+        // Add the remove button to all day periods.
+        if(!item.isOuter() && item.isDay()) {
             holder.button.setVisibility(View.VISIBLE);
             holder.button.setOnClickListener(
                     new View.OnClickListener() {
@@ -87,6 +74,10 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
         // Set the title to the first time.
         String title = item.toString();
         holder.title.setText(title);
+
+        if(!item.isOuter()) {
+
+        }
 
         if (item.isDay()) {
             holder.dot.setBackgroundResource(R.drawable.dot_day);

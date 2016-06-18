@@ -79,14 +79,14 @@ public class ThermostatActivity extends Activity {
     protected void onResume() {
         super.onResume();
         activityResumed();
-        System.out.println("Resumed");
+        System.out.println("App resumed");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         activityPaused();
-        System.out.println("Paused");
+        System.out.println("App paused");
     }
 
     @Override

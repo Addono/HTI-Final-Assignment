@@ -24,8 +24,9 @@ import org.thermostatapp.util.*;
 /*
  * TODO: Add support to upload the day schedule.
  * TODO: Add support to insert a switch.
- * TODO: Add support to switch a switch from day to night.
+ * TODO: Add support to switch a switch from day to night for the initial and final stage.
  * TODO: Add revert option after switches have been altered.
+ * TODO: Add support for changing already present times.
  * TODO: Add titles to pages. (easy)
  */
 
@@ -98,7 +99,7 @@ public class DayEditor extends Activity implements OnItemClickListener {
         }).start();
 
         // Assign a new custom list view adapter to the list view object.
-        listViewAssignNewAdapter();
+        resetListViewAdapter();
 
         // Add an click listener to the list view.
         listView.setOnItemClickListener(this);
@@ -110,8 +111,7 @@ public class DayEditor extends Activity implements OnItemClickListener {
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position,
-                            long id) {
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         SwitchListItem item = adapter.getItem(position);
 
         // If clicked on a title show a time picker dialog
@@ -131,11 +131,13 @@ public class DayEditor extends Activity implements OnItemClickListener {
 
     /**
      * Removes all duplicates and unnecessary switches from the "items" array list.
+     * @return boolean True if an item was removed, else false.
      */
-    public void removeDuplicates() {
+    public boolean removeDuplicates() {
         // Get the data of the first elements.
         boolean prevDay = !items.get(0).isDay();
         int prevTime = -1;
+        boolean removed = false;
 
         for(int i = 0, size = items.size(); i < size; i++) {
             SwitchListItem item = items.get(i);
@@ -148,12 +150,15 @@ public class DayEditor extends Activity implements OnItemClickListener {
                 prevTime = time;
                 prevDay = isDay;
             } else {
-                // Remove it
+                // Remove the item from the list.
                 items.remove(i);
                 i--;
                 size--;
+                removed = true;
             }
         }
+
+        return removed;
     }
 
     /**
@@ -168,14 +173,25 @@ public class DayEditor extends Activity implements OnItemClickListener {
 
             removeDuplicates();
 
-            listViewAssignNewAdapter();
+            resetListViewAdapter();
+        }
+    }
+
+    public void insertItem(boolean isDay, int time) {
+        addItem(isDay, time, SwitchListItem.Type.center);
+
+        sortItems();
+
+        // Only update the adapter if items where removed.
+        if(removeDuplicates()) {
+            resetListViewAdapter();
         }
     }
 
     /**
      * Sorts all currently displayed items.
      */
-    public void sortItems() {
+    private void sortItems() {
         adapter.sort(new Comparator<SwitchListItem>() {
             @Override
             public int compare(SwitchListItem lhs, SwitchListItem rhs) {
@@ -186,12 +202,11 @@ public class DayEditor extends Activity implements OnItemClickListener {
                 } else {
                     return -1;
                 }
-
             }
         });
     }
 
-    public void listViewAssignNewAdapter() {
+    private void resetListViewAdapter() {
         adapter = new DayListViewAdapter(this,R.layout.switch_list_element,items, this);
         listView.setAdapter(adapter);
     }
