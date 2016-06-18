@@ -18,7 +18,7 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
     Context context;
     DayEditor dayEditor;
     ViewHolder holder = null;
-    SwitchListItem item;
+    SwitchListItem item, precedingItem;
 
     public DayListViewAdapter(Context context, int resourceId,
                               ArrayList<SwitchListItem> items,
@@ -37,6 +37,12 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
 
     public View getView(final int position, View convertView, ViewGroup parent) {
         item = getItem(position);
+
+        if(position > 0) {
+            precedingItem = getItem(position - 1);
+        } else {
+            precedingItem = null;
+        }
 
         LayoutInflater mInflater = (LayoutInflater) context
                 .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
