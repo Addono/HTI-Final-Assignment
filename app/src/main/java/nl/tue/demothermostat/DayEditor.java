@@ -21,10 +21,17 @@ import java.util.Comparator;
 
 import org.thermostatapp.util.*;
 
+/*
+ * TODO: Add support to upload the day schedule.
+ * TODO: Add support to insert a switch.
+ * TODO: Add support to switch a switch from day to night.
+ * TODO: Add revert option after switches have been altered.
+ * TODO: Add titles to pages. (easy)
+ */
+
 /**
  * @author Adriaan Knapen <a.d.knapen@student.tue.nl>
  */
-
 public class DayEditor extends Activity implements OnItemClickListener {
     Intent intent;
     static String day;
@@ -49,6 +56,7 @@ public class DayEditor extends Activity implements OnItemClickListener {
         day = intent.getStringExtra("day");
         items.clear();
 
+        // Fetch the week program and convert it into a day schedule.
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -89,12 +97,13 @@ public class DayEditor extends Activity implements OnItemClickListener {
             }
         }).start();
 
-        resetAdapter();
+        // Assign a new custom list view adapter to the list view object.
+        listViewAssignNewAdapter();
 
         // Add an click listener to the list view.
         listView.setOnItemClickListener(this);
 
-        // Wait until the WPG fetch thread is finished.
+        // Wait until the WPG fetch thread is finished to prevent the thread from pausing to early, and therefore missing UI items.
         while(items.size() == 0) {
             System.out.println("Waiting for WPG fetch thread to finish");
         }
@@ -148,7 +157,7 @@ public class DayEditor extends Activity implements OnItemClickListener {
     }
 
     /**
-     * TODO: Implement remove item function.
+     * Removes an item from the day editor.
      */
     public void removeItem(int position) {
         // Validate if we will not remove the first or last item.
@@ -159,7 +168,7 @@ public class DayEditor extends Activity implements OnItemClickListener {
 
             removeDuplicates();
 
-            resetAdapter();
+            listViewAssignNewAdapter();
         }
     }
 
@@ -182,7 +191,7 @@ public class DayEditor extends Activity implements OnItemClickListener {
         });
     }
 
-    public void resetAdapter() {
+    public void listViewAssignNewAdapter() {
         adapter = new DayListViewAdapter(this,R.layout.switch_list_element,items, this);
         listView.setAdapter(adapter);
     }
