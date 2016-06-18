@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Button;
 import java.util.ArrayList;
 
 /**
@@ -59,6 +60,12 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
             holder.lineUp = (View) convertView.findViewById(R.id.lineUp);
             holder.lineDown = (View) convertView.findViewById(R.id.lineDown);
             holder.listItem = (LinearLayout) convertView.findViewById(R.id.listItem);
+
+            Button button = (Button) convertView.findViewById(R.id.remove);
+
+            button.setOnClickListener(
+                    new 
+            );
 
             convertView.setTag(holder);
         } else {

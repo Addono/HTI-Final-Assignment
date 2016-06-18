@@ -36,7 +36,6 @@ public class DayEditor extends Activity implements OnItemClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.day_list);
 
@@ -107,9 +106,12 @@ public class DayEditor extends Activity implements OnItemClickListener {
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {
+        // Make a distinction for clicks on the intersections and the titles.
         if(position % 2 == 1) {
+            // If clicked on an intersection do ...
             addItem(false, 2401);
         } else {
+            // If clicked on a title show a time picker dialog
             SwitchListItem item = adapter.getItem(position);
             new TimePickerDialog(this,
                     new TimePickerDialog.OnTimeSetListener() {
@@ -133,12 +135,15 @@ public class DayEditor extends Activity implements OnItemClickListener {
     }
 
     /**
-     * TODO: Implement
+     * TODO: Implement removeDuplicates function.
      */
     public void removeDuplicates() {
 
     }
 
+    /**
+     * TODO: Check if working
+     */
     public void sortItems() {
         adapter.sort(new Comparator<SwitchListItem>() {
             @Override
