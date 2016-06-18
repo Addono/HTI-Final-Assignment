@@ -39,7 +39,6 @@ public class DayEditor extends Activity implements OnItemClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.day_list);
 
-//        timePicker = (TimePicker) findViewById(R.id.timePicker);
         listView = (ListView) findViewById(R.id.list);
 
         intent = getIntent();
@@ -92,10 +91,6 @@ public class DayEditor extends Activity implements OnItemClickListener {
 
         // Add an click listener to the list view.
         listView.setOnItemClickListener(this);
-
-
-        //timePicker.setIs24HourView(true);
-        //timePicker.setEnabled(false);
 
         // Wait until the WPG fetch thread is finished.
         while(items.size() == 0) {

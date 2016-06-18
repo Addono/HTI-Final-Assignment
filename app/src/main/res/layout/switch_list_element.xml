@@ -53,6 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="Remove" />
+            android:text="Remove"
+            android:visibility="gone"/>
     </RelativeLayout>
 </LinearLayout>

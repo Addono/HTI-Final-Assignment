@@ -28,6 +28,7 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
         TextView title;
         View dot, lineUp, lineDown;
         LinearLayout listItem;
+        Button button;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -61,16 +62,25 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
             holder.lineDown = (View) convertView.findViewById(R.id.lineDown);
             holder.listItem = (LinearLayout) convertView.findViewById(R.id.listItem);
 
-            Button button = (Button) convertView.findViewById(R.id.remove);
-
-            button.setOnClickListener(
-                    new 
-            );
+            holder.button = (Button) convertView.findViewById(R.id.remove);
 
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+
+        if(position % 2 == 0) {
+            holder.button.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            System.out.println("Test");
+                        }
+                    }
+            );
+        }
+
+
 
         if(!item.getIsIntersection()) {
             // Set the title to the start time.
