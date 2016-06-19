@@ -84,8 +84,6 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
         }
 
         if(!item.isOuter()) {
-            System.err.println(item.getHour() + " " +  item.getMinute());
-
             holder.title.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
@@ -102,7 +100,6 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
                     }
             );
         }
-
 
         // Set the title to the first time.
         String title = item.toString();

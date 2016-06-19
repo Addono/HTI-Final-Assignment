@@ -107,7 +107,7 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
         // Create the time range picker.
         tpd = com.borax12.materialdaterangepicker.time.TimePickerDialog.newInstance(
                 DayEditor.this,
-                12, 00,
+                0, 0,
                 true
         );
 
@@ -133,10 +133,8 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
 
         if(startTime == endTime) {
             Toast.makeText(this, "Item not added.\nStart and end time shouldn't be equal.", Toast.LENGTH_LONG).show();
-            tpd.setStartTime(hourOfDayEnd, minuteEnd);
-        } else if(startTime < endTime) {
+        } else if(startTime > endTime) {
             Toast.makeText(this, "Item not added.\nStart time should be before end time.", Toast.LENGTH_LONG).show();
-            tpd.setStartTime(hourOfDayEnd, minuteEnd);
         } else {
             insertPeriod(true, startTime, endTime);
         }
