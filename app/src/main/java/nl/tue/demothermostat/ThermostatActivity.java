@@ -62,6 +62,7 @@ public class ThermostatActivity extends Activity {
     private int prevTarget = -1;
 
     private static boolean activityVisible;
+    private boolean holidayMode;
 
     public static boolean isActivityVisible() {
         return activityVisible;
@@ -321,77 +322,59 @@ public class ThermostatActivity extends Activity {
             }
         });
 
+        // Initially set the holiday mode.
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String state = HeatingSystem.get("weekProgramState");
+
+                    setHolidayMode(state.equalsIgnoreCase("on"));
+                }   catch (Exception e) {
+                    System.err.println("Error from getdata " + e);
+                }
+            }
+        }).start();
+
         // Add a listener for the holiday mode toggle.
         holidayModeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*
-                 * TODO: Implement holiday mode button.
-                 */
-                // Get the current state of the system
-                boolean state = weekOverviewBtn.isEnabled();
-                if(state){
-                    weekOverviewBtn.setEnabled(false);
-                    Button button=(Button) view;
-                    ((Button) view).setText("Turn ON vacationmode");
-                } else{
-                    weekOverviewBtn.setEnabled(true);
-                    Button button=(Button) view;
-                    ((Button) view).setText("Turn OFF vacationmode");
-                }
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                String state = HeatingSystem.get("weekProgramState");
-                                System.err.println(state);
-                                if(state.equalsIgnoreCase("on")) {
-                                    System.err.println("What happen if VM is ON");
-                                } else {
-                                    System.err.println("What happen if VM is OFF");
-
-                                }
-                            }   catch (Exception e) {
-                                    System.err.println("Error from getdata " + e);
-                            }
-                        }
-                    }).start();
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            String state = HeatingSystem.get("weekProgramState");
-                            System.err.println(state);
-                            if(state.equalsIgnoreCase("on")) {
-                                HeatingSystem.put("weekProgramState", "off");
-                                state = "off";
-                            } else{
-                                HeatingSystem.put("weekProgramState", "on");
-                                state = "on";
-                            }
-
-                        } catch (Exception e) {
-                            System.err.println("Error from getdata " + e);
-                        }
-                    }
-                }).start();
-
-
-
-                /*
-                 * if inHolidayMode
-                 *      inHolidayMode = false
-                 *      serverSetHolidayMode(false)
-                 *      disableAllButtons(false) // Re-enable all buttons.
-                 * else
-                 *      inHolidayMode = true
-                 *      serverSetHolidayMode(true)
-                 *      disableAllButtons(true) // Enable all buttons.
-                 */
-
+                setHolidayMode(!getHolidayMode());
             }
         });
+    }
+
+    /**
+     * Sets the holiday mode and disable input accordingly.
+     * @param boolean True if holiday mode should be enabled, false if it should be disabled.
+     */
+    private void setHolidayMode(final boolean state) {
+        // Set the holiday mode variable
+        holidayMode = state;
+
+        // Enable/disable the week overview button.
+        weekOverviewBtn.setEnabled(!state);
+
+        // Update the title hof the holiday mode button.
+        holidayModeBtn.setText(state ? "Turn vacation mode OFF" : "Turn vacation mode ON");
+
+        // Update the server values.
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String serverState = state ? "off" : "on";
+                    HeatingSystem.put("weekProgramState", serverState);
+                }   catch (Exception e) {
+                    System.err.println("Error from getdata " + e);
+                }
+            }
+        }).start();
+    }
+
+    private boolean getHolidayMode() {
+        return holidayMode;
     }
 
     private void setDisplayedArc(int target) {

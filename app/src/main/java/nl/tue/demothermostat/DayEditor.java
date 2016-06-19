@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.content.Intent;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.borax12.materialdaterangepicker.time.RadialPickerLayout;
 
@@ -42,7 +43,7 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
     ListView listView;
 
     RelativeLayout addItem;
-    PopupWindow addPopup;
+    com.borax12.materialdaterangepicker.time.TimePickerDialog tpd;
 
     WeekProgram wpg;
     ArrayList<Switch> switches;
@@ -103,21 +104,19 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
         // Assign a new custom list view adapter to the list view object.
         resetListViewAdapter();
 
-        Calendar now = Calendar.getInstance();
-        final com.borax12.materialdaterangepicker.time.TimePickerDialog tpd = com.borax12.materialdaterangepicker.time.TimePickerDialog.newInstance(
+        // Create the time range picker.
+        tpd = com.borax12.materialdaterangepicker.time.TimePickerDialog.newInstance(
                 DayEditor.this,
-                12,
-                00,
+                12, 00,
                 true
         );
 
         tpd.setTitle("Add day period");
-        tpd.setAllowEnterTransitionOverlap(false);
 
         addItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tpd.show(getFragmentManager(), "Timepickerdialog");
+                showAddItem();
             }
         });
 
@@ -129,7 +128,22 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
 
     @Override
     public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int hourOfDayEnd, int minuteEnd) {
-        insertPeriod(true, combineHourMinute(hourOfDay, minute), combineHourMinute(hourOfDayEnd, minuteEnd));
+        int startTime = combineHourMinute(hourOfDay, minute);
+        int endTime = combineHourMinute(hourOfDayEnd, minuteEnd);
+
+        if(startTime == endTime) {
+            Toast.makeText(this, "Item not added.\nStart and end time shouldn't be equal.", Toast.LENGTH_LONG).show();
+            tpd.setStartTime(hourOfDayEnd, minuteEnd);
+        } else if(startTime < endTime) {
+            Toast.makeText(this, "Item not added.\nStart time should be before end time.", Toast.LENGTH_LONG).show();
+            tpd.setStartTime(hourOfDayEnd, minuteEnd);
+        } else {
+            insertPeriod(true, startTime, endTime);
+        }
+    }
+
+    public void showAddItem() {
+        tpd.show(getFragmentManager(), "Timepickerdialog");
     }
 
     public void addItem(boolean isDay, int time, SwitchListItem.Type type) {
@@ -211,12 +225,25 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
         }
     }
 
+
+    /*
+     * TODO: Allow changing the type of first and last element.
+     */
+    /**
+     * Inserts a period, either day or night. Can create up to two
+     * @param boolean If the inserted period should be a night or day period.
+     * @param int The start time as combined hours and minutes between 0 and 2400.
+     * @param int The end time as combined hours and minutes between 0 and 2400.
+     */
     public void insertPeriod(boolean isDay, int startTime, int endTime) {
+        boolean removed = false;
+
         for(int i = 0; i < items.size(); i++) {
             SwitchListItem s = items.get(i);
 
             if(s.getTime() >= startTime && s.getTime() <= endTime) {
                 removeItem(i);
+                removed = true;
             }
         }
 
@@ -230,6 +257,7 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
             resetListViewAdapter();
         }
 
+        // Push the schedule to the server.
         postDaySchedule();
     }
 
