@@ -79,7 +79,6 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
                         int time = s.getTime_Int();
                         SwitchListItem.Type type;
 
-
                             // Give the first item the "first" type, all other the "center" type.
                             if (i == 0) {
                                 type = SwitchListItem.Type.first;
@@ -132,9 +131,9 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
         int endTime = combineHourMinute(hourOfDayEnd, minuteEnd);
 
         if(startTime == endTime) {
-            Toast.makeText(this, "Item not added.\nStart and end time shouldn't be equal.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Item not added, try again and ensure that\nthe start and end time are not equal.", Toast.LENGTH_LONG).show();
         } else if(startTime > endTime) {
-            Toast.makeText(this, "Item not added.\nStart time should be before end time.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Item not added, try again and ensure that\nthe end time is after the start time.", Toast.LENGTH_LONG).show();
         } else {
             insertPeriod(true, startTime, endTime);
         }
