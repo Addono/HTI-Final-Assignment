@@ -37,7 +37,7 @@ public class ThermostatActivity extends Activity {
     private LinearLayout dayTempBtn, tempTempBtn, nightTempBtn;
     private ViewFlipper arcView;
     private Animation slide_in_left, slide_in_right, slide_out_left, slide_out_right;
-    private Button weekOverviewBtn;
+    private Button weekOverviewBtn, holidayModeBtn;
     private Intent intent;
 
     private int[] angle = new int[3], angle_prev = new int[3];
@@ -152,7 +152,8 @@ public class ThermostatActivity extends Activity {
 
         arcView = (ViewFlipper) findViewById(R.id.seekArcs);
 
-        weekOverviewBtn = (Button)findViewById(R.id.week_overview);
+        weekOverviewBtn = (Button) findViewById(R.id.week_overview);
+        weekOverviewBtn = (Button) findViewById(R.id.holidayMode);
 
         String main_server = "http://wwwis.win.tue.nl/2id40-ws/";
         String backup_server = "http://pcwin889.win.tue.nl/2id40-ws/";
@@ -310,12 +311,33 @@ public class ThermostatActivity extends Activity {
         // Set the default arc to the temporary temperature arc.
         setDisplayedArc(temp_arc_tab);
 
-        // Add a listener to the
+        // Add a listener for the week overview button.
         weekOverviewBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), WeekOverview.class);
                 startActivity(intent);
+            }
+        });
+
+        // Add a listener for the holiday mode toggle.
+        holidayModeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*
+                 * TODO: Implement holiday mode button.
+                 */
+
+                /*
+                 * if inHolidayMode
+                 *      inHolidayMode = false
+                 *      serverSetHolidayMode(false)
+                 *      disableAllButtons(false) // Re-enable all buttons.
+                 * else
+                 *      inHolidayMode = true
+                 *      serverSetHolidayMode(true)
+                 *      disableAllButtons(true) // Enable all buttons.
+                 */
             }
         });
     }
