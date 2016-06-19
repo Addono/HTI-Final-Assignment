@@ -152,8 +152,8 @@ public class ThermostatActivity extends Activity {
 
         arcView = (ViewFlipper) findViewById(R.id.seekArcs);
 
-        weekOverviewBtn = (Button) findViewById(R.id.week_overview);
-        weekOverviewBtn = (Button) findViewById(R.id.holidayMode);
+        holidayModeBtn = (Button)findViewById(R.id.holiday_mode);
+        weekOverviewBtn = (Button)findViewById(R.id.week_overview);
 
         String main_server = "http://wwwis.win.tue.nl/2id40-ws/";
         String backup_server = "http://pcwin889.win.tue.nl/2id40-ws/";
@@ -338,6 +338,7 @@ public class ThermostatActivity extends Activity {
                  *      serverSetHolidayMode(true)
                  *      disableAllButtons(true) // Enable all buttons.
                  */
+
             }
         });
     }

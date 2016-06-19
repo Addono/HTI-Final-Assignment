@@ -345,7 +345,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Testing Web Service"
-            android:id="@+id/testing_ws"
+            android:id="@+id/holiday_mode"
             style="@style/button" />
     </LinearLayout>
 </RelativeLayout>
