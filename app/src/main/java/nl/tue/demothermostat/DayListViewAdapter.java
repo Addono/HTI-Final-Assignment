@@ -2,6 +2,8 @@ package nl.tue.demothermostat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +20,7 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
     Context context;
     DayEditor dayEditor;
     ViewHolder holder = null;
-    SwitchListItem item, precedingItem;
+    SwitchListItem item, precedingItem, succeedingItem;
 
     public DayListViewAdapter(Context context, int resourceId,
                               ArrayList<SwitchListItem> items,
@@ -31,17 +33,19 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
     private class ViewHolder {
         TextView title;
         View dot, lineUp, lineDown;
-        LinearLayout listItem;
         Button button;
+        LinearLayout listItem;
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
         item = getItem(position);
 
-        if(position > 0) {
+        if(item.getType() != SwitchListItem.Type.first) {
             precedingItem = getItem(position - 1);
-        } else {
-            precedingItem = null;
+        }
+
+        if(item.getType() != SwitchListItem.Type.last) {
+            succeedingItem = getItem(position + 1);
         }
 
         LayoutInflater mInflater = (LayoutInflater) context
@@ -55,9 +59,8 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
             holder.dot = (View) convertView.findViewById(R.id.dot);
             holder.lineUp = (View) convertView.findViewById(R.id.lineUp);
             holder.lineDown = (View) convertView.findViewById(R.id.lineDown);
-            holder.listItem = (LinearLayout) convertView.findViewById(R.id.listItem);
-
             holder.button = (Button) convertView.findViewById(R.id.remove);
+            holder.listItem = (LinearLayout) convertView.findViewById(R.id.listItem);
 
             convertView.setTag(holder);
         } else {
@@ -81,8 +84,27 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
         String title = item.toString();
         holder.title.setText(title);
 
-        if(!item.isOuter()) {
+        if(holder.listItem != null && item.getType() != SwitchListItem.Type.last) {
+            int verticalSpacing = ((succeedingItem.getTime() - item.getTime()) * 1000) / 2400;
 
+            System.out.println(verticalSpacing);
+
+            /*
+            holder.title.setPadding(holder.title.getPaddingLeft(),
+                    holder.title.getPaddingTop(),
+                    holder.title.getPaddingRight(),
+                    holder.title.getPaddingBottom() + verticalSpacing); */
+            /*
+            holder.listItem.setPadding(holder.listItem.getPaddingLeft(),
+                    holder.listItem.getPaddingTop(),
+                    holder.listItem.getPaddingRight(),
+                    holder.listItem.getPaddingBottom() + verticalSpacing);
+            */
+            holder.listItem.setMinimumHeight(holder.listItem.getHeight() + verticalSpacing);
+        }
+
+        if(holder.listItem == null) {
+            System.err.println("Listitem = null");
         }
 
         if (item.isDay()) {
@@ -111,4 +133,20 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
 
         return convertView;
     }
+
+
+    /**
+     * This method converts dp unit to equivalent pixels, depending on device density.
+     *
+     * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
+     * @param context Context to get resources and device specific display metrics
+     * @return A float value to represent px equivalent to dp depending on device density
+     */
+    public static int convertDpToPixel(float dp, Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+
+        return Math.round(dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
 }
