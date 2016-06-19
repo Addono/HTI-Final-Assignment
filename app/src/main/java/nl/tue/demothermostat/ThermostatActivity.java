@@ -255,6 +255,10 @@ public class ThermostatActivity extends Activity {
                     // Post the new temperature to the server.
                     postTemp(i, angleToTemp(angle[i]));
 
+                    if(getHolidayMode() && i != night_arc_tab) {
+                        showToast("These setting changes won't have effect as long as you are in holiday mode. To disable holiday mode click on the button at the bottom right.");
+                    }
+
                     /**
                      * TODO Add revert option when temperature is changed (use a "snackbar").
                      */
