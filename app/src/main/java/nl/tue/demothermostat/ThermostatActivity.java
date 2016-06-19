@@ -329,7 +329,7 @@ public class ThermostatActivity extends Activity {
                 try {
                     String state = HeatingSystem.get("weekProgramState");
 
-                    setHolidayMode(state.equalsIgnoreCase("on"));
+                    setHolidayMode(state.equalsIgnoreCase("off"));
                 }   catch (Exception e) {
                     System.err.println("Error from getdata " + e);
                 }
