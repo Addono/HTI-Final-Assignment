@@ -7,6 +7,23 @@
 
 
     <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="1px"
+        android:background="@color/mdtp_background_color" >
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:textSize="28sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -28,7 +45,7 @@
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/header"
         android:layout_above="@id/bottomBar"
         android:listSelector="@android:color/transparent"
         android:cacheColorHint="@android:color/transparent"

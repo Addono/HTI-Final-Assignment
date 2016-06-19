@@ -40,7 +40,7 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
     private static ArrayList<SwitchListItem> items = new ArrayList<SwitchListItem>();
     private DayListViewAdapter adapter;
     private ListView listView;
-    private TextView countText;
+    private TextView countText, title;
 
     RelativeLayout addItem;
     com.borax12.materialdaterangepicker.time.TimePickerDialog tpd;
@@ -58,10 +58,13 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
         listView = (ListView) findViewById(R.id.list);
         addItem = (RelativeLayout) findViewById(R.id.add_item);
         countText = (TextView) findViewById(R.id.count);
+        title = (TextView) findViewById(R.id.title);
 
         intent = getIntent();
         day = intent.getStringExtra("day");
         items.clear();
+
+        title.setText(day.substring(0, 1).toUpperCase() + day.substring(1));
 
         // Fetch the week program and convert it into a day schedule.
         new Thread(new Runnable() {
@@ -119,7 +122,7 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
         addItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(countDayAmount() < 5) {
+                if (countDayAmount() < 5) {
                     showAddItem();
                 } else {
                     showToast("'Day periods' limit (5) reached, remove one before adding a new one.");
