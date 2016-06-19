@@ -64,6 +64,7 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
         day = intent.getStringExtra("day");
         items.clear();
 
+        // Set the title to the current day (with the first letter capitalised).
         title.setText(day.substring(0, 1).toUpperCase() + day.substring(1));
 
         // Fetch the week program and convert it into a day schedule.
