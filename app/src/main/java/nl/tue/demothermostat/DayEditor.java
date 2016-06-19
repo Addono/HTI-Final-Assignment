@@ -85,7 +85,7 @@ public class DayEditor extends Activity {
                     }
 
                     // Add the midnight switch.
-                    addItem(true, 2400, SwitchListItem.Type.last);
+                    addItem(false, 2400, SwitchListItem.Type.last);
 
                     removeDuplicates();
                 } catch (Exception e) {
@@ -102,7 +102,7 @@ public class DayEditor extends Activity {
             public void onClick(View v) {
 
 
-                addItem(false, 1000, SwitchListItem.Type.center);
+                addItem(true, 1000, SwitchListItem.Type.center);
 
                 removeDuplicates();
 
