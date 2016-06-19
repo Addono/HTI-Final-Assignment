@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.ViewFlipper;
 import android.content.Intent;
 import com.triggertrap.seekarc.SeekArc;
-import android.R.*;
 
 
 import org.thermostatapp.util.*;
@@ -154,7 +153,7 @@ public class ThermostatActivity extends Activity {
         arcView = (ViewFlipper) findViewById(R.id.seekArcs);
 
         holidayModeBtn = (Button)findViewById(R.id.holiday_mode);
-        weekOverviewBtn = (Button)findViewById(R.id.week_overview);
+        weekOverviewBtn = (Button)findViewById(R.id.week_schedule);
 
         String main_server = "http://wwwis.win.tue.nl/2id40-ws/";
         String backup_server = "http://pcwin889.win.tue.nl/2id40-ws/";
@@ -496,7 +495,7 @@ public class ThermostatActivity extends Activity {
 
         ImageView bMinus = (ImageView)findViewById(R.id.bMinus);
         temp = (TextView)findViewById(R.id.temp);
-        Button weekOverview = (Button)findViewById(R.id.week_overview);
+        Button weekOverview = (Button)findViewById(R.id.week_schedule);
 
         weekOverview.setOnClickListener(new View.OnClickListener() {
             @Override

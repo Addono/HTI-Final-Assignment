@@ -338,8 +338,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:layout_margin="4dp"
-            android:text="Week Overview"
-            android:id="@+id/week_overview"
+            android:text="Week schedule"
+            android:id="@+id/week_schedule"
             style="@style/button" />
 
         <Button
