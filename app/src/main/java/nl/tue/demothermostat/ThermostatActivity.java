@@ -328,6 +328,56 @@ public class ThermostatActivity extends Activity {
                 /*
                  * TODO: Implement holiday mode button.
                  */
+                // Get the current state of the system
+                boolean state = weekOverviewBtn.isEnabled();
+                if(state){
+                    weekOverviewBtn.setEnabled(false);
+                    Button button=(Button) view;
+                    ((Button) view).setText("Turn ON vacationmode");
+                } else{
+                    weekOverviewBtn.setEnabled(true);
+                    Button button=(Button) view;
+                    ((Button) view).setText("Turn OFF vacationmode");
+                }
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                String state = HeatingSystem.get("weekProgramState");
+                                System.err.println(state);
+                                if(state.equalsIgnoreCase("on")) {
+                                    System.err.println("What happen if VM is ON");
+                                } else {
+                                    System.err.println("What happen if VM is OFF");
+
+                                }
+                            }   catch (Exception e) {
+                                    System.err.println("Error from getdata " + e);
+                            }
+                        }
+                    }).start();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            String state = HeatingSystem.get("weekProgramState");
+                            System.err.println(state);
+                            if(state.equalsIgnoreCase("on")) {
+                                HeatingSystem.put("weekProgramState", "off");
+                                state = "off";
+                            } else{
+                                HeatingSystem.put("weekProgramState", "on");
+                                state = "on";
+                            }
+
+                        } catch (Exception e) {
+                            System.err.println("Error from getdata " + e);
+                        }
+                    }
+                }).start();
+
+
 
                 /*
                  * if inHolidayMode
@@ -502,4 +552,5 @@ public class ThermostatActivity extends Activity {
             }
         });
          */
+        
 }
