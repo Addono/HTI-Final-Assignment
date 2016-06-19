@@ -22,12 +22,8 @@ import java.util.Comparator;
 import org.thermostatapp.util.*;
 
 /*
- * TODO: Add support to upload the day schedule.(Implemented)
- * TODO: Add support to insert a switch.
  * TODO: Add support to switch a switch from day to night for the initial and final stage.
  * TODO: Add revert option after switches have been altered.
- * TODO: Add support for changing already present times. (Implemented)
- * TODO: Add titles to pages. (easy)
  */
 
 /**
@@ -148,6 +144,17 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
     public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int hourOfDayEnd, int minuteEnd) {
         int startTime = combineHourMinute(hourOfDay, minute);
         int endTime = combineHourMinute(hourOfDayEnd, minuteEnd);
+
+        // Prevent failing on unsupported values (when the outer elements should be replaced).
+        if(startTime == 0) {
+        }
+
+        if(startTime == 2400) {
+            startTime = 2399;
+        }
+
+        if(endTime == 0) {
+        }
 
         if(startTime == endTime) {
             showToast("Item not added, try again and ensure that\nthe start and end time are not equal.");

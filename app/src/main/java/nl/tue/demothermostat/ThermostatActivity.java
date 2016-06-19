@@ -2,6 +2,8 @@ package nl.tue.demothermostat;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.view.MotionEvent;
 import android.view.animation.Animation;
@@ -9,6 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Button;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 import android.content.Intent;
 import com.triggertrap.seekarc.SeekArc;
@@ -370,6 +373,9 @@ public class ThermostatActivity extends Activity {
                 }
             }
         }).start();
+
+        // Show a toast with the current status.
+        showToast("Holiday mode " + (state ? "enabled" : "disabled") + ".");
     }
 
     private boolean getHolidayMode() {
@@ -488,51 +494,7 @@ public class ThermostatActivity extends Activity {
         this.prevTempText[target].setText("Previous: " + this.prevTemp[target] + "℃");
     }
 
-        /**
-        ImageView bPlus = (ImageView)findViewById(R.id.bPlus);
-        bPlus.setImageResource(R.drawable.add_button);
-
-
-        ImageView bMinus = (ImageView)findViewById(R.id.bMinus);
-        temp = (TextView)findViewById(R.id.temp);
-        Button weekOverview = (Button)findViewById(R.id.week_schedule);
-
-        weekOverview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), WeekOverview.class);
-                startActivity(intent);
-            }
-        });
-
-        Button testingWS = (Button)findViewById(R.id.testing_ws);
-
-        testingWS.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), DayEditor.class);
-                startActivity(intent);
-            }
-        });
-
-        seekBar = (SeekBar)findViewById(R.id.seekBar);
-        seekBar.setProgress(vtemp);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                temp.setText(i + " \u2103");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-         */
-        
+    public void showToast(String text) {
+        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+    }
 }
