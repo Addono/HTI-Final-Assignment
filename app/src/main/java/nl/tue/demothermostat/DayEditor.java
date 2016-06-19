@@ -147,6 +147,7 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
 
         // Prevent failing on unsupported values (when the outer elements should be replaced).
         if(startTime == 0) {
+            startTime = 2;
         }
 
         if(startTime == 2400) {
@@ -154,6 +155,7 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
         }
 
         if(endTime == 0) {
+            endTime = 2;
         }
 
         if(startTime == endTime) {
