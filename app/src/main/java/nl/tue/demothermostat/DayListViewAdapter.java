@@ -1,6 +1,7 @@
 package nl.tue.demothermostat;
 
 import android.app.Activity;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
@@ -11,6 +12,8 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Button;
+import android.widget.TimePicker;
+
 import java.util.ArrayList;
 
 /**
@@ -20,7 +23,7 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
     Context context;
     DayEditor dayEditor;
     ViewHolder holder = null;
-    SwitchListItem item, precedingItem, succeedingItem;
+    SwitchListItem precedingItem, succeedingItem;
 
     public DayListViewAdapter(Context context, int resourceId,
                               ArrayList<SwitchListItem> items,
@@ -38,7 +41,7 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
-        item = getItem(position);
+        final SwitchListItem item = getItem(position);
 
         if(item.getType() != SwitchListItem.Type.first) {
             precedingItem = getItem(position - 1);
@@ -80,33 +83,40 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
             );
         }
 
+        if(!item.isOuter()) {
+            System.err.println(item.getHour() + " " +  item.getMinute());
+
+            holder.title.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            System.err.println(item.getHour() + " " +  item.getMinute());
+                            // If clicked on a title show a time picker dialog
+                            new TimePickerDialog(context,
+                                    new TimePickerDialog.OnTimeSetListener() {
+                                        @Override
+                                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                            dayEditor.changeTime(position, hourOfDay, minute);
+                                        }
+                                    }, item.getHour(), item.getMinute(), true).show();
+                        }
+                    }
+            );
+        }
+
+
         // Set the title to the first time.
         String title = item.toString();
         holder.title.setText(title);
 
+        // Add some vertical spacing to show different time period lengths.
         if(holder.listItem != null && item.getType() != SwitchListItem.Type.last) {
-            int verticalSpacing = ((succeedingItem.getTime() - item.getTime()) * 1000) / 2400;
+            int minHeight = ((succeedingItem.getTime() - item.getTime()) * 1000) / 2400;
 
-            System.out.println(verticalSpacing);
-
-            /*
-            holder.title.setPadding(holder.title.getPaddingLeft(),
-                    holder.title.getPaddingTop(),
-                    holder.title.getPaddingRight(),
-                    holder.title.getPaddingBottom() + verticalSpacing); */
-            /*
-            holder.listItem.setPadding(holder.listItem.getPaddingLeft(),
-                    holder.listItem.getPaddingTop(),
-                    holder.listItem.getPaddingRight(),
-                    holder.listItem.getPaddingBottom() + verticalSpacing);
-            */
-            holder.listItem.setMinimumHeight(holder.listItem.getHeight() + verticalSpacing);
+            holder.listItem.setMinimumHeight(minHeight);
         }
 
-        if(holder.listItem == null) {
-            System.err.println("Listitem = null");
-        }
-
+        // Add the dot in front in the correct color.
         if (item.isDay()) {
             holder.dot.setBackgroundResource(R.drawable.dot_day);
         } else {
@@ -132,21 +142,6 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
         }
 
         return convertView;
-    }
-
-
-    /**
-     * This method converts dp unit to equivalent pixels, depending on device density.
-     *
-     * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
-     * @param context Context to get resources and device specific display metrics
-     * @return A float value to represent px equivalent to dp depending on device density
-     */
-    public static int convertDpToPixel(float dp, Context context){
-        Resources resources = context.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-
-        return Math.round(dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
 }

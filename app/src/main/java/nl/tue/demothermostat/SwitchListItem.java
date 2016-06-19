@@ -24,6 +24,10 @@ public class SwitchListItem {
 
     public int getMinute() {return (int) Math.floor((getTime() % 100f) * 60f / 100f);}
 
+    public void setTime(int time) {
+        this.time = time;
+    }
+
     public boolean isDay() {
         return isDay;
     }
@@ -44,6 +48,11 @@ public class SwitchListItem {
         // Make sure the minute consists of two characters.
         if(getMinute() < 10) {
             minute = "0" + minute;
+        }
+
+        // Make sure the hours consist of two characters.
+        if(getHour() < 10) {
+            hour = "0" + hour;
         }
 
         return hour + ":" + minute;

@@ -158,7 +158,7 @@ public class ThermostatActivity extends Activity {
         String main_server = "http://wwwis.win.tue.nl/2id40-ws/";
         String backup_server = "http://pcwin889.win.tue.nl/2id40-ws/";
 
-        HeatingSystem.BASE_ADDRESS = main_server + groupNumber;
+        HeatingSystem.BASE_ADDRESS = backup_server + groupNumber;
         HeatingSystem.WEEK_PROGRAM_ADDRESS = HeatingSystem.BASE_ADDRESS + "/weekProgram";
 
         // Create animations
@@ -177,6 +177,7 @@ public class ThermostatActivity extends Activity {
                             "targetTemperature",
                             "nightTemperature"
                     };
+
 
                     for(int i = 0; i < tempOptions.length; i++) {
                         setTemp(i, Double.parseDouble(HeatingSystem.get(tempOptions[i])));

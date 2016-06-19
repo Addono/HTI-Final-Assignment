@@ -6,42 +6,37 @@
 package nl.tue.demothermostat;
 
 import android.app.Activity;
-import android.app.TimePickerDialog;
-import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.content.Intent;
-import android.widget.TimePicker;
-
+import android.widget.RelativeLayout;
 import java.util.ArrayList;
 import java.util.Comparator;
 
 import org.thermostatapp.util.*;
 
 /*
- * TODO: Add support to upload the day schedule.
+ * TODO: Add support to upload the day schedule.(Implemented)
  * TODO: Add support to insert a switch.
  * TODO: Add support to switch a switch from day to night for the initial and final stage.
  * TODO: Add revert option after switches have been altered.
- * TODO: Add support for changing already present times.
+ * TODO: Add support for changing already present times. (Implemented)
  * TODO: Add titles to pages. (easy)
  */
 
 /**
  * @author Adriaan Knapen <a.d.knapen@student.tue.nl>
  */
-public class DayEditor extends Activity implements OnItemClickListener {
+public class DayEditor extends Activity {
     Intent intent;
     static String day;
 
     private static ArrayList<SwitchListItem> items = new ArrayList<SwitchListItem>();
     private DayListViewAdapter adapter;
-    DialogFragment newFragment;
-    TimePickerDialog timePickerDialog;
     ListView listView;
+
+    RelativeLayout addItem;
 
     WeekProgram wpg;
     ArrayList<Switch> switches;
@@ -49,9 +44,10 @@ public class DayEditor extends Activity implements OnItemClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.day_list);
+        setContentView(R.layout.day_editor);
 
         listView = (ListView) findViewById(R.id.list);
+        addItem = (RelativeLayout) findViewById(R.id.add_item);
 
         intent = getIntent();
         day = intent.getStringExtra("day");
@@ -76,20 +72,20 @@ public class DayEditor extends Activity implements OnItemClickListener {
                         int time = s.getTime_Int();
                         SwitchListItem.Type type;
 
-                        System.err.println(s.getTime() + " " + s.getType());
 
-                        // Give the first item the "first" type, all other the "center" type.
-                        if(i == 0) {
-                            type = SwitchListItem.Type.first;
-                        } else {
-                            type = SwitchListItem.Type.center;
-                        }
+                            // Give the first item the "first" type, all other the "center" type.
+                            if (i == 0) {
+                                type = SwitchListItem.Type.first;
+                            } else {
+                                type = SwitchListItem.Type.center;
+                            }
 
-                        addItem(isDay, time, type);
+                            addItem(isDay, time, type);
+
                     }
 
                     // Add the midnight switch.
-                    addItem(false, 2400, SwitchListItem.Type.last);
+                    addItem(true, 2400, SwitchListItem.Type.last);
 
                     removeDuplicates();
                 } catch (Exception e) {
@@ -101,8 +97,20 @@ public class DayEditor extends Activity implements OnItemClickListener {
         // Assign a new custom list view adapter to the list view object.
         resetListViewAdapter();
 
-        // Add an click listener to the list view.
-        listView.setOnItemClickListener(this);
+        addItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                addItem(false, 1000, SwitchListItem.Type.center);
+
+                removeDuplicates();
+
+                resetListViewAdapter();
+
+                postDaySchedule();
+            }
+        });
 
         // Wait until the WPG fetch thread is finished to prevent the thread from pausing to early, and therefore missing UI items.
         while(items.size() == 0) {
@@ -110,23 +118,30 @@ public class DayEditor extends Activity implements OnItemClickListener {
         }
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        SwitchListItem item = adapter.getItem(position);
-
-        // If clicked on a title show a time picker dialog
-        new TimePickerDialog(this,
-                new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-
-                    }
-                }, item.getHour(), item.getMinute(), true).show();
-    }
-
     public void addItem(boolean isDay, int time, SwitchListItem.Type type) {
         SwitchListItem period = new SwitchListItem(isDay, time, type);
-        adapter.add(period);
+
+        if(type == SwitchListItem.Type.center) {
+            adapter.insert(period, 1);
+        } else {
+            adapter.add(period);
+        }
+    }
+
+    public void changeTime(int position, int time) {
+        items.get(position).setTime(time);
+
+        sortItems();
+
+        if(removeDuplicates()) {
+            resetListViewAdapter();
+        }
+    }
+
+    public void changeTime(int position, int hour, int minute) {
+        int time = hour * 100 + (int) Math.floor(minute * 100 / 60);
+
+        changeTime(position, time);
     }
 
     /**
@@ -138,6 +153,9 @@ public class DayEditor extends Activity implements OnItemClickListener {
         boolean prevDay = !items.get(0).isDay();
         int prevTime = -1;
         boolean removed = false;
+
+        // First sort, since the algorithm assumes a sorted list of elements
+        sortItems();
 
         for(int i = 0, size = items.size(); i < size; i++) {
             SwitchListItem item = items.get(i);
@@ -174,6 +192,8 @@ public class DayEditor extends Activity implements OnItemClickListener {
             removeDuplicates();
 
             resetListViewAdapter();
+
+            postDaySchedule();
         }
     }
 
@@ -195,9 +215,9 @@ public class DayEditor extends Activity implements OnItemClickListener {
         adapter.sort(new Comparator<SwitchListItem>() {
             @Override
             public int compare(SwitchListItem lhs, SwitchListItem rhs) {
-                if(lhs.getTime() == rhs.getTime()) {
+                if (lhs.getTime() == rhs.getTime()) {
                     return 0;
-                } else if(lhs.getTime() > rhs.getTime()) {
+                } else if (lhs.getTime() > rhs.getTime()) {
                     return 1;
                 } else {
                     return -1;
@@ -207,7 +227,60 @@ public class DayEditor extends Activity implements OnItemClickListener {
     }
 
     private void resetListViewAdapter() {
-        adapter = new DayListViewAdapter(this,R.layout.switch_list_element,items, this);
+        adapter = new DayListViewAdapter(this,
+                R.layout.switch_list_element,
+                items,
+                this);
         listView.setAdapter(adapter);
+    }
+
+    public void postDaySchedule() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    WeekProgram wpg = HeatingSystem.getWeekProgram();
+
+                    for(int i = 0, day = 0, night = 0; i < 10; i++) {
+                        if(i + 1 < items.size() && items.get(i).getTime() <= 2400) {
+                            SwitchListItem item = items.get(i + 1);
+
+                            String dayNight;
+                            String time = item.toString();
+
+                            if(item.isDay()) {
+                                dayNight = "day";
+                                day++;
+                            } else {
+                                night++;
+                                dayNight = "night";
+                            }
+
+                            System.err.println(dayNight);
+
+                            wpg.data.get(DayEditor.day).set(i, new Switch(dayNight, true, time));
+                        } else {
+                            String dayNight;
+
+                            if(day < night) {
+                                day++;
+                                dayNight = "day";
+                            } else {
+                                night++;
+                                dayNight = "night";
+                            }
+
+                            System.err.println(dayNight);
+
+                            wpg.data.get(DayEditor.day).set(i, new Switch(dayNight, false, "00:00"));
+                        }
+                    }
+
+                    HeatingSystem.setWeekProgram(wpg);
+                } catch (Exception e) {
+                    System.err.println("Error from getdata " + e);
+                }
+            }
+        }).start();
     }
 }

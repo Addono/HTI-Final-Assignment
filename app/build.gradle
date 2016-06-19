@@ -10,6 +10,7 @@ android {
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -22,5 +23,10 @@ android {
 dependencies {
     compile 'com.github.Triggertrap:SeekArc:v1.1'
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile "com.android.support:appcompat-v7:23.4.0"
+    compile "com.android.support:design:23.4.0"
+    compile 'com.android.support:support-vector-drawable:23.4.0' // VectorDrawableCompat
+    compile 'com.android.support:animated-vector-drawable:23.4.0' // AnimatedVectorDrawableCompat
+    compile "com.android.support:support-annotations:23.4.0"
+    compile 'com.github.tittojose:timerangepicker-library:0.2'
 }
