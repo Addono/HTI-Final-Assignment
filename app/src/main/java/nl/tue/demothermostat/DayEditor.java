@@ -10,8 +10,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 import android.content.Intent;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+
+import com.borax12.materialdaterangepicker.time.RadialPickerLayout;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 
 import org.thermostatapp.util.*;
@@ -28,7 +33,7 @@ import org.thermostatapp.util.*;
 /**
  * @author Adriaan Knapen <a.d.knapen@student.tue.nl>
  */
-public class DayEditor extends Activity {
+public class DayEditor extends Activity implements com.borax12.materialdaterangepicker.time.TimePickerDialog.OnTimeSetListener {
     Intent intent;
     static String day;
 
@@ -37,6 +42,7 @@ public class DayEditor extends Activity {
     ListView listView;
 
     RelativeLayout addItem;
+    PopupWindow addPopup;
 
     WeekProgram wpg;
     ArrayList<Switch> switches;
@@ -97,18 +103,21 @@ public class DayEditor extends Activity {
         // Assign a new custom list view adapter to the list view object.
         resetListViewAdapter();
 
+        Calendar now = Calendar.getInstance();
+        final com.borax12.materialdaterangepicker.time.TimePickerDialog tpd = com.borax12.materialdaterangepicker.time.TimePickerDialog.newInstance(
+                DayEditor.this,
+                12,
+                00,
+                true
+        );
+
+        tpd.setTitle("Add day period");
+        tpd.setAllowEnterTransitionOverlap(false);
+
         addItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-                addItem(true, 1000, SwitchListItem.Type.center);
-
-                removeDuplicates();
-
-                resetListViewAdapter();
-
-                postDaySchedule();
+                tpd.show(getFragmentManager(), "Timepickerdialog");
             }
         });
 
@@ -116,6 +125,11 @@ public class DayEditor extends Activity {
         while(items.size() == 0) {
             System.out.println("Waiting for WPG fetch thread to finish");
         }
+    }
+
+    @Override
+    public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int hourOfDayEnd, int minuteEnd) {
+        insertPeriod(true, combineHourMinute(hourOfDay, minute), combineHourMinute(hourOfDayEnd, minuteEnd));
     }
 
     public void addItem(boolean isDay, int time, SwitchListItem.Type type) {
@@ -197,8 +211,17 @@ public class DayEditor extends Activity {
         }
     }
 
-    public void insertItem(boolean isDay, int time) {
-        addItem(isDay, time, SwitchListItem.Type.center);
+    public void insertPeriod(boolean isDay, int startTime, int endTime) {
+        for(int i = 0; i < items.size(); i++) {
+            SwitchListItem s = items.get(i);
+
+            if(s.getTime() >= startTime && s.getTime() <= endTime) {
+                removeItem(i);
+            }
+        }
+
+        addItem(isDay, startTime, SwitchListItem.Type.center);
+        addItem(!isDay, endTime, SwitchListItem.Type.center);
 
         sortItems();
 
@@ -206,6 +229,8 @@ public class DayEditor extends Activity {
         if(removeDuplicates()) {
             resetListViewAdapter();
         }
+
+        postDaySchedule();
     }
 
     /**
@@ -282,5 +307,27 @@ public class DayEditor extends Activity {
                 }
             }
         }).start();
+    }
+
+    public String hourMinuteToString(int hour, int minute) {
+        String hourAsString = String.valueOf(hour);
+        String minuteAsString = String.valueOf(minute);
+
+        // Make sure the hours consist of two characters.
+        if(hour < 10) {
+            hourAsString = "0" + hourAsString;
+        }
+
+        // Make sure the minute consists of two characters.
+        if(minute < 10) {
+            minuteAsString = "0" + minuteAsString;
+        }
+
+
+        return hourAsString + ":" + minuteAsString;
+    }
+
+    public int combineHourMinute(int hour, int minute) {
+        return hour * 100 + (minute * 100) / 60;
     }
 }

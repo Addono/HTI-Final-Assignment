@@ -20,13 +20,14 @@ android {
     }
 }
 
+repositories {
+    jcenter()
+}
+
 dependencies {
+    compile 'com.borax12.materialdaterangepicker:library:1.7'
     compile 'com.github.Triggertrap:SeekArc:v1.1'
     testCompile 'junit:junit:4.12'
     compile "com.android.support:appcompat-v7:23.4.0"
     compile "com.android.support:design:23.4.0"
-    compile 'com.android.support:support-vector-drawable:23.4.0' // VectorDrawableCompat
-    compile 'com.android.support:animated-vector-drawable:23.4.0' // AnimatedVectorDrawableCompat
-    compile "com.android.support:support-annotations:23.4.0"
-    compile 'com.github.tittojose:timerangepicker-library:0.2'
 }

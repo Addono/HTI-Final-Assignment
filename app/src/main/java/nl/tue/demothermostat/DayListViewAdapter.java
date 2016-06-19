@@ -90,7 +90,6 @@ public class DayListViewAdapter extends ArrayAdapter<SwitchListItem> {
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            System.err.println(item.getHour() + " " +  item.getMinute());
                             // If clicked on a title show a time picker dialog
                             new TimePickerDialog(context,
                                     new TimePickerDialog.OnTimeSetListener() {
