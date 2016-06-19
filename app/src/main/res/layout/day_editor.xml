@@ -1,25 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    android:id="@+id/main_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
+
+
+    <RelativeLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/mdtp_background_color" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18dp"
+            android:id="@+id/count"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="2dp"
+            />
+    </RelativeLayout>
+
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/bottomBar"
         android:listSelector="@android:color/transparent"
         android:cacheColorHint="@android:color/transparent"
         android:paddingLeft="16dp"
-        android:paddingRight="16dp" />
+        android:paddingRight="16dp"
+        android:elevation="0px"/>
 
     <RelativeLayout
         android:id="@+id/add_item"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="16dp">
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="-28dp"
+        android:elevation="5px"
+        android:layout_centerHorizontal="true"
+        android:layout_alignTop="@id/bottomBar">
 
         <View
             android:layout_height="match_parent"
@@ -34,34 +59,3 @@
             android:background="@drawable/plus"/>
     </RelativeLayout>
 </RelativeLayout>
-<!--
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <Button
-        android:id="@+id/getdata"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="GET Data" />
-
-    <Button
-        android:id="@+id/putdata"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="PUT Data" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="getParam"
-        android:id="@+id/data1" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="old value"
-        android:id="@+id/data2" />
-
-</LinearLayout> -->

@@ -9,15 +9,14 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.content.Intent;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.borax12.materialdaterangepicker.time.RadialPickerLayout;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
 
 import org.thermostatapp.util.*;
@@ -40,13 +39,16 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
 
     private static ArrayList<SwitchListItem> items = new ArrayList<SwitchListItem>();
     private DayListViewAdapter adapter;
-    ListView listView;
+    private ListView listView;
+    private TextView countText;
 
     RelativeLayout addItem;
     com.borax12.materialdaterangepicker.time.TimePickerDialog tpd;
 
     WeekProgram wpg;
     ArrayList<Switch> switches;
+
+    int dayAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,7 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
 
         listView = (ListView) findViewById(R.id.list);
         addItem = (RelativeLayout) findViewById(R.id.add_item);
+        countText = (TextView) findViewById(R.id.count);
 
         intent = getIntent();
         day = intent.getStringExtra("day");
@@ -80,10 +83,14 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
                         SwitchListItem.Type type;
 
                             // Give the first item the "first" type, all other the "center" type.
-                            if (i == 0) {
+                            if (i == 0 && time == 0) {
                                 type = SwitchListItem.Type.first;
                             } else {
                                 type = SwitchListItem.Type.center;
+
+                                if(i == 0) {
+                                    addItem(false, 0, SwitchListItem.Type.first);
+                                }
                             }
 
                             addItem(isDay, time, type);
@@ -100,9 +107,6 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
             }
         }).start();
 
-        // Assign a new custom list view adapter to the list view object.
-        resetListViewAdapter();
-
         // Create the time range picker.
         tpd = com.borax12.materialdaterangepicker.time.TimePickerDialog.newInstance(
                 DayEditor.this,
@@ -115,14 +119,25 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
         addItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showAddItem();
+                if(countDayAmount() < 5) {
+                    showAddItem();
+                } else {
+                    showToast("'Day periods' limit (5) reached, remove one before adding a new one.");
+                }
             }
         });
+
+        resetListViewAdapter();
 
         // Wait until the WPG fetch thread is finished to prevent the thread from pausing to early, and therefore missing UI items.
         while(items.size() == 0) {
             System.out.println("Waiting for WPG fetch thread to finish");
         }
+
+        // Assign a new custom list view adapter to the list view object.
+        resetListViewAdapter();
+
+        updateAmount();
     }
 
     @Override
@@ -131,12 +146,16 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
         int endTime = combineHourMinute(hourOfDayEnd, minuteEnd);
 
         if(startTime == endTime) {
-            Toast.makeText(this, "Item not added, try again and ensure that\nthe start and end time are not equal.", Toast.LENGTH_LONG).show();
+            showToast("Item not added, try again and ensure that\nthe start and end time are not equal.");
         } else if(startTime > endTime) {
-            Toast.makeText(this, "Item not added, try again and ensure that\nthe end time is after the start time.", Toast.LENGTH_LONG).show();
+            showToast("Item not added, try again and ensure that\nthe end time is after the start time.");
         } else {
             insertPeriod(true, startTime, endTime);
         }
+    }
+
+    public void showToast(String text) {
+        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
     }
 
     public void showAddItem() {
@@ -282,6 +301,8 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
                 items,
                 this);
         listView.setAdapter(adapter);
+
+        updateAmount();
     }
 
     public void postDaySchedule() {
@@ -305,9 +326,6 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
                                 night++;
                                 dayNight = "night";
                             }
-
-                            System.err.println(dayNight);
-
                             wpg.data.get(DayEditor.day).set(i, new Switch(dayNight, true, time));
                         } else {
                             String dayNight;
@@ -320,8 +338,6 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
                                 dayNight = "night";
                             }
 
-                            System.err.println(dayNight);
-
                             wpg.data.get(DayEditor.day).set(i, new Switch(dayNight, false, "00:00"));
                         }
                     }
@@ -332,6 +348,27 @@ public class DayEditor extends Activity implements com.borax12.materialdaterange
                 }
             }
         }).start();
+
+        updateAmount();
+    }
+
+    public int countDayAmount() {
+        int amount = 0;
+
+        for(int i = 0, max = items.size(); i < max; i++) {
+            if(items.get(i).isDay()) {
+                amount++;
+            }
+        }
+
+        return amount;
+    }
+
+    public void updateAmount() {
+        // Update the amount
+        dayAmount = countDayAmount();
+
+        countText.setText(dayAmount + " out of 5 day periods in use");
     }
 
     public String hourMinuteToString(int hour, int minute) {
